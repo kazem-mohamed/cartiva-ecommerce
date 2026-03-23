@@ -1,4 +1,4 @@
-import { NextResponse } from 'next/server'
+import { NextRequest, NextResponse } from 'next/server'
 import { getServerSession } from 'next-auth'
 import { authOptions } from '../../auth/[...nextauth]/route'
 
@@ -13,10 +13,13 @@ async function withJsonResponse(res: Response) {
   }
 }
 
-export async function PUT(request: Request, context: { params: { productId: string } }) {
+export async function PUT(
+  request: NextRequest,
+  context: { params: Promise<{ productId: string }> }
+) {
   const session = await getServerSession(authOptions)
   const token = (session as any)?.accessToken
-  const { productId } = context.params
+  const { productId } = await context.params
 
   if (!token) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
@@ -39,10 +42,13 @@ export async function PUT(request: Request, context: { params: { productId: stri
   return response
 }
 
-export async function DELETE(request: Request, context: { params: { productId: string } }) {
+export async function DELETE(
+  request: NextRequest,
+  context: { params: Promise<{ productId: string }> }
+) {
   const session = await getServerSession(authOptions)
   const token = (session as any)?.accessToken
-  const { productId } = context.params
+  const { productId } = await context.params
 
   if (!token) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })

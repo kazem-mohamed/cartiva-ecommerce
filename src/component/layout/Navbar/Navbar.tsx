@@ -162,8 +162,9 @@ export default function Navbar() {
   const displayEmail = profile?.email ?? session?.user?.email ?? pickUserEmail(profile ?? null)
 
   const handleSignOut = async () => {
-    const result = await signOut({ redirect: false })
-    if (result?.error) {
+    try {
+      await signOut({ redirect: false })
+    } catch {
       toast.error('Sign out failed. Please try again.')
       return
     }

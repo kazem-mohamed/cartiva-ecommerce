@@ -6,7 +6,7 @@ import { toast } from 'sonner'
 
 interface Review {
   _id: string
-  user?: { name: string }
+  user?: { name?: string }
   rating: number
   review: string
   createdAt?: string

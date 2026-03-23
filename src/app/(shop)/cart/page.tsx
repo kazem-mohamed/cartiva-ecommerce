@@ -11,21 +11,53 @@ import { Spinner } from '@/component/ui/Spinner'
 const CART_API = 'https://ecommerce.routemisr.com/api/v2/cart'
 const COUPON_API = 'https://ecommerce.routemisr.com/api/v2/cart/applyCoupon'
 
+type CartProduct = {
+  _id?: string
+  productId?: string
+  count?: number
+  price?: number
+  product?: {
+    _id?: string
+    id?: string
+    title?: string
+    imageCover?: string
+    price?: number
+    category?: {
+      name?: string
+    }
+    categoryName?: string
+  }
+}
+
+type Cart = {
+  _id?: string
+  id?: string
+  products?: CartProduct[]
+  totalCartPrice?: number
+  totalAfterDiscount?: number
+}
+
+type ConfirmRemove = {
+  id: string
+  cartItemId: string | null
+  title: string
+}
+
 export default function CartPage() {
   const router = useRouter()
   const { data: session, status } = useSession()
   const token = session?.accessToken ?? ''
 
-  const [cart, setCart] = useState(null)
+  const [cart, setCart] = useState<Cart | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState('')
-  const [updatingId, setUpdatingId] = useState(null)
-  const [removingId, setRemovingId] = useState(null)
+  const [updatingId, setUpdatingId] = useState<string | null>(null)
+  const [removingId, setRemovingId] = useState<string | null>(null)
   const [clearing, setClearing] = useState(false)
   const [coupon, setCoupon] = useState('')
   const [couponLoading, setCouponLoading] = useState(false)
   const [showCoupon, setShowCoupon] = useState(false)
-  const [confirmRemove, setConfirmRemove] = useState(null)
+  const [confirmRemove, setConfirmRemove] = useState<ConfirmRemove | null>(null)
   const [confirmClear, setConfirmClear] = useState(false)
 
   const items = cart?.products ?? []
@@ -39,7 +71,7 @@ export default function CartPage() {
   const remainingForFreeShipping = Math.max(0, freeShippingThreshold - totalAfterDiscount)
   const shippingProgress = Math.min(100, (totalAfterDiscount / freeShippingThreshold) * 100)
 
-  const loadCart = async (activeToken, opts = {}) => {
+  const loadCart = async (activeToken: string, opts: { silent?: boolean } = {}) => {
     const silent = opts?.silent === true
     try {
       if (!silent) {
@@ -82,7 +114,7 @@ export default function CartPage() {
     loadCart(token)
   }, [status, token, router])
 
-  const handleUpdateQuantity = async (productId, nextCount) => {
+  const handleUpdateQuantity = async (productId: string, nextCount: number) => {
     if (!token) {
       toast.error('Please login first')
       return
@@ -119,7 +151,7 @@ export default function CartPage() {
     }
   }
 
-  const handleRemoveItem = async (productId, cartItemId) => {
+  const handleRemoveItem = async (productId: string, cartItemId?: string | null) => {
     if (!token) {
       toast.error('Please login first')
       return
@@ -144,7 +176,7 @@ export default function CartPage() {
       }
 
       const json = await res.json().catch(() => null)
-      const products = json?.data?.products ?? []
+      const products: CartProduct[] = json?.data?.products ?? []
       const stillThere = products.some((item) => {
         const id = item?.product?._id ?? item?.product?.id ?? item?.productId
         return id === productId
@@ -169,7 +201,7 @@ export default function CartPage() {
       }
 
       setCart((prev) => {
-        if (!prev?.products) return prev
+        if (!prev || !prev.products) return prev
         const nextProducts = prev.products.filter((item) => {
           const id = item?.product?._id ?? item?.product?.id ?? item?.productId
           const rowId = item?._id
@@ -215,7 +247,7 @@ export default function CartPage() {
     }
   }
 
-  const handleConfirmRemove = (productId, cartItemId, title) => {
+  const handleConfirmRemove = (productId: string, cartItemId?: string | null, title?: string) => {
     if (!productId) {
       toast.error('Invalid product')
       return
@@ -385,7 +417,7 @@ export default function CartPage() {
             <div className="space-y-4">
               {items.map((item) => {
                 const product = item.product ?? {}
-                const productId = product._id ?? product.id ?? item.productId
+                const productId = String(product._id ?? product.id ?? item.productId ?? '')
                 const count = item.count ?? 1
                 const unitPrice = item.price ?? product.price ?? 0
                 const total = unitPrice * count

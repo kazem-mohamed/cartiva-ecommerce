@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { Exo } from "next/font/google";
+import { Suspense } from "react";
 import { Toaster } from "@/component/ui/sonner";
 import { Providers } from "@/app/providers";
 import Navbar from "@/component/layout/Navbar/Navbar";
@@ -32,7 +33,9 @@ export default function RootLayout({
     <html lang="en" className={`${exo.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Providers>
-          <RouteLoader />
+          <Suspense fallback={null}>
+            <RouteLoader />
+          </Suspense>
           <Navbar />
           {children}
           <Footer />
