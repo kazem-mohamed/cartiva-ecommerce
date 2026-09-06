@@ -15,7 +15,7 @@ async function withJsonResponse(res: Response) {
 
 export async function GET() {
   const session = await getServerSession(authOptions)
-  const token = (session as any)?.accessToken
+  const token = session?.accessToken
 
   if (!token) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
@@ -34,9 +34,34 @@ export async function GET() {
   return response
 }
 
+export async function POST(request: Request) {
+  const session = await getServerSession(authOptions)
+  const token = session?.accessToken
+
+  if (!token) {
+    return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })
+  }
+
+  const body = await request.json().catch(() => ({}))
+
+  const res = await fetch(CART_API, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      token,
+      Authorization: `Bearer ${token}`,
+    },
+    body: JSON.stringify(body),
+  })
+
+  const response = await withJsonResponse(res)
+  response.headers.set('Cache-Control', 'no-store')
+  return response
+}
+
 export async function DELETE() {
   const session = await getServerSession(authOptions)
-  const token = (session as any)?.accessToken
+  const token = session?.accessToken
 
   if (!token) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })

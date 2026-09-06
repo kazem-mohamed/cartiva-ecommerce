@@ -100,7 +100,7 @@ export const authOptions: NextAuthOptions = {
   },
   cookies: {
     sessionToken: {
-      name: 'freshcart-token',
+      name: 'souqly-token',
       options: {
         httpOnly: true,
         sameSite: 'lax',

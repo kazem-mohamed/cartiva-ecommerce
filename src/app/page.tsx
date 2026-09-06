@@ -1,26 +1,14 @@
-import HomeCategories from '@/component/home/homeCategories'
-import MainSlider from '@/component/home/MainSlider'
-import Sale from '@/component/home/Sale'
-import Sec2 from '@/component/home/sec2'
-import ProductHome from './ProductHome'
-import ContactHome from '@/component/home/ContactHome'
+import HeroBento from "@/component/home/HeroBento";
+import ProductSection from "@/component/home/ProductSection";
+import BrandBento from "@/component/home/BrandBento";
 
 export default function Homepage() {
   return (
-    <>
-    {/* main slider */}
-    <MainSlider />
-
-    {/* sections 2 */}
-    <Sec2/>
-    {/* categories */}
-    <HomeCategories />
-    {/* sale section */}
-    <Sale />
-    {/* products */}
-    <ProductHome />
-    {/* contact */}
-    <ContactHome />
-    </>
-  )
+    <main>
+      <HeroBento />
+      <ProductSection kicker="Newest first" title="Just landed" sort="-createdAt" limit={8} />
+      <BrandBento />
+      <ProductSection kicker="Most bought" title="Best selling" sort="-sold" limit={4} />
+    </main>
+  );
 }

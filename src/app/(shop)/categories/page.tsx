@@ -1,5 +1,12 @@
 import Image from 'next/image'
 import Link from 'next/link'
+import type { Metadata } from 'next'
+import Reveal from '@/component/ui/Reveal'
+
+export const metadata: Metadata = {
+  title: 'Departments',
+  description: 'Every department in the Cartiva catalogue.',
+}
 
 interface Category {
   _id: string
@@ -8,21 +15,13 @@ interface Category {
   slug: string
 }
 
-interface CategoriesResponse {
-  data: Category[]
-}
-
 const CATEGORIES_API = 'https://ecommerce.routemisr.com/api/v1/categories'
 
 async function getCategories(): Promise<Category[]> {
   try {
-    const res = await fetch(CATEGORIES_API, {
-      next: { revalidate: 60 },
-    })
-
+    const res = await fetch(CATEGORIES_API, { next: { revalidate: 300 } })
     if (!res.ok) return []
-
-    const json = (await res.json()) as CategoriesResponse
+    const json = (await res.json()) as { data: Category[] }
     return json.data ?? []
   } catch {
     return []
@@ -33,100 +32,90 @@ export default async function CategoriesPage() {
   const categories = await getCategories()
 
   return (
-    <div className="min-h-screen bg-gray-50/50">
-      <div className="bg-gradient-to-br from-primary-600 via-primary-500 to-primary-400 text-white">
-        <div className="container mx-auto px-4 py-12 sm:py-16">
-          <nav className="flex items-center gap-2 text-sm text-white/70 mb-6">
-            <Link className="hover:text-white transition-colors" href="/">
-              Home
-            </Link>
-            <span className="text-white/40">/</span>
-            <span className="text-white font-medium">Categories</span>
-          </nav>
-          <div className="flex items-center gap-5">
-            <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl ring-1 ring-white/30">
-              <svg
-                data-prefix="fas"
-                data-icon="layer-group"
-                className="svg-inline--fa fa-layer-group text-3xl"
-                role="img"
-                viewBox="0 0 512 512"
-                aria-hidden="true"
-              >
-                <path
-                  fill="currentColor"
-                  d="M232.5 5.2c14.9-6.9 32.1-6.9 47 0l218.6 101c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 149.8C5.4 145.8 0 137.3 0 128s5.4-17.9 13.9-21.8L232.5 5.2zM48.1 218.4l164.3 75.9c27.7 12.8 59.6 12.8 87.3 0l164.3-75.9 34.1 15.8c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 277.8C5.4 273.8 0 265.3 0 256s5.4-17.9 13.9-21.8l34.1-15.8zM13.9 362.2l34.1-15.8 164.3 75.9c27.7 12.8 59.6 12.8 87.3 0l164.3-75.9 34.1 15.8c8.5 3.9 13.9 12.4 13.9 21.8s-5.4 17.9-13.9 21.8l-218.6 101c-14.9 6.9-32.1 6.9-47 0L13.9 405.8C5.4 401.8 0 393.3 0 384s5.4-17.9 13.9-21.8z"
-                />
-              </svg>
-            </div>
-            <div>
-              <h1 className="text-3xl sm:text-4xl font-bold tracking-tight">All Categories</h1>
-              <p className="text-white/80 mt-1">Browse our wide range of product categories</p>
-            </div>
-          </div>
-        </div>
-      </div>
+    <main className="mx-auto w-full max-w-[1320px] px-5 sm:px-8 py-10 sm:py-14">
+      <nav aria-label="Breadcrumb" className="mb-8">
+        <ol className="label flex items-center gap-2 text-ink-muted">
+          <li><Link href="/" className="transition-colors duration-300 hover:text-gold">Home</Link></li>
+          <li aria-hidden="true">/</li>
+          <li className="text-ink">Departments</li>
+        </ol>
+      </nav>
 
-      <div className="container mx-auto px-4 py-10">
-        {categories.length === 0 ? (
-          <div className="rounded-2xl border border-dashed border-gray-200 bg-white p-10 text-center">
-            <p className="text-gray-600">No categories available right now.</p>
-            <Link
-              className="mt-5 inline-flex items-center gap-2 rounded-xl bg-primary-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-primary-600/20 transition-colors hover:bg-primary-700"
-              href="/"
-            >
-              Back to home
-              <svg data-prefix="fas" data-icon="arrow-right" className="h-4 w-4" role="img" viewBox="0 0 512 512" aria-hidden="true">
-                <path
-                  fill="currentColor"
-                  d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"
-                />
-              </svg>
-            </Link>
-          </div>
-        ) : (
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4 sm:gap-6">
-            {categories.map((category) => (
+      <header className="bento mb-8 p-8 sm:p-12">
+        <span className="label text-ink-muted">
+          <span className="tabular">{categories.length}</span> departments
+        </span>
+        <h1 className="font-display-lg mt-4 text-[clamp(32px,5vw,58px)]">
+          Everything, <span className="gold-text">sorted.</span>
+        </h1>
+        <p className="mt-5 max-w-[54ch] text-[16px] font-light leading-relaxed text-ink-muted">
+          Ten departments, one account. Pick a shelf and start.
+        </p>
+      </header>
+
+      {categories.length === 0 ? (
+        <div className="bento px-8 py-20 text-center">
+          <h2 className="font-display text-xl">Departments are unavailable</h2>
+          <p className="mt-3 text-sm font-light text-ink-muted">
+            The catalogue could not be reached. Refresh to try again.
+          </p>
+        </div>
+      ) : (
+        /* Bento: the first tile runs wide and tall, the rest fall in around
+           it — the engine's varied-span rule, not a uniform grid. */
+        <Reveal
+          stagger={60}
+          className="grid grid-cols-2 gap-5 lg:grid-cols-4 lg:auto-rows-[220px]"
+        >
+          {categories.map((cat, i) => {
+            const feature = i === 0
+            return (
               <Link
-                key={category._id}
-                className="group bg-white rounded-2xl border border-gray-100 p-4 sm:p-6 shadow-sm hover:shadow-xl hover:border-primary-200 transition-all duration-300 hover:-translate-y-1"
-                href={`/categories/${category._id}`}
+                key={cat._id}
+                href={`/categories/${cat._id}`}
+                className={`reveal bento bento-hover group relative overflow-hidden ${
+                  feature ? 'col-span-2 row-span-2' : ''
+                } ${!feature ? 'aspect-[4/5] lg:aspect-auto' : 'aspect-square lg:aspect-auto'}`}
               >
-                <div className="aspect-square rounded-xl overflow-hidden bg-gray-50 mb-4 relative">
-                  <Image
-                    alt={category.name}
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
-                    src={category.image}
-                    fill
-                    sizes="(min-width: 1280px) 12rem, (min-width: 768px) 10rem, 8rem"
-                  />
-                </div>
-                <h3 className="font-bold text-gray-900 text-center group-hover:text-primary-600 transition-colors">
-                  {category.name}
-                </h3>
-                <div className="flex justify-center mt-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <span className="text-xs text-primary-600 flex items-center gap-1">
-                    View Subcategories
-                    <svg
-                      data-prefix="fas"
-                      data-icon="arrow-right"
-                      className="h-3 w-3 shrink-0"
-                      role="img"
-                      viewBox="0 0 512 512"
-                      aria-hidden="true"
-                    >
-                      <path
-                        fill="currentColor"
-                        d="M502.6 278.6c12.5-12.5 12.5-32.8 0-45.3l-160-160c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L402.7 224 32 224c-17.7 0-32 14.3-32 32s14.3 32 32 32l370.7 0-105.4 105.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l160-160z"
-                      />
+                <Image
+                  src={cat.image}
+                  alt=""
+                  fill
+                  sizes={feature ? '(max-width: 1024px) 100vw, 50vw' : '(max-width: 1024px) 50vw, 25vw'}
+                  className="object-cover transition-transform duration-[900ms] ease-[var(--ease)] group-hover:scale-[1.06]"
+                />
+                {/* The API's category art is arbitrary photography — the
+                    scrim is what keeps the label legible over all of it. */}
+                <span
+                  aria-hidden="true"
+                  className="absolute inset-0"
+                  style={{
+                    background:
+                      'linear-gradient(180deg, rgba(255,255,255,0) 32%, rgba(255,255,255,0.94) 100%)',
+                  }}
+                />
+                <span className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-3 p-5 sm:p-6">
+                  <span
+                    className={`font-display block text-ink ${
+                      feature ? 'text-[clamp(20px,2.6vw,30px)]' : 'text-[15px]'
+                    }`}
+                  >
+                    {cat.name}
+                  </span>
+                  <span
+                    aria-hidden="true"
+                    className="mb-1 flex shrink-0 -translate-x-1.5 text-gold opacity-0 transition-[opacity,transform] duration-[500ms] ease-[var(--ease)] group-hover:translate-x-0 group-hover:opacity-100"
+                  >
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="h-4 w-4">
+                      <path d="M5 12h14M13 6l6 6-6 6" />
                     </svg>
                   </span>
-                </div>
+                </span>
               </Link>
-            ))}
-          </div>
-        )}
-      </div>
-    </div>
+            )
+          })}
+        </Reveal>
+      )}
+    </main>
   )
 }

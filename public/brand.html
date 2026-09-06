@@ -1,0 +1,586 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartiva Identity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#08070A; --vault:#1C1917; --vault-dark:#0C0A09; --panel:#161318; --hair:#2A252C;
+  --paper:#FAFAF9; --paper-line:#DED9D2; --paper-ink:#0C0A09; --paper-muted:#6B6560;
+  --g1:#5C3D06; --g2:#9A6B12; --g3:#C79A3C; --g4:#E8C878; --g5:#F6E7BE;
+  --txt:#F2ECE1; --dim:#9A9088;
+  --ok:#1F5F3F; --warn:#B45309; --err:#8A2B18;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --metal:linear-gradient(115deg,var(--g1) 0%,var(--g2) 22%,var(--g4) 42%,var(--g5) 50%,var(--g4) 58%,var(--g2) 78%,var(--g1) 100%);
+  --metal-light:linear-gradient(115deg,var(--g1) 0%,var(--g2) 25%,var(--g3) 45%,var(--g2) 65%,var(--g1) 100%);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--paper);color:var(--paper-ink);
+  font-family:'Archivo',system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1200px;margin:0 auto;padding:0 32px}
+.d{font-variation-settings:"wdth" 116;font-weight:600;letter-spacing:-.02em;line-height:1.05;text-wrap:balance}
+.d2{font-variation-settings:"wdth" 110;font-weight:600;letter-spacing:-.015em}
+.lab{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--paper-muted);font-weight:500}
+.dark .lab,.cp .lab,.pc .lab{color:var(--dim)}
+.gold{background:linear-gradient(100deg,var(--g1),var(--g2) 40%,var(--g3) 55%,var(--g1));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+.tab{font-variant-numeric:tabular-nums}
+h1,h2,h3,h4,h5{margin:0}
+:focus-visible{outline:2px solid var(--g2);outline-offset:3px}
+.dark :focus-visible{outline:1px solid var(--g4);outline-offset:4px}
+
+header{padding:96px 0 78px;position:relative}
+header::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--g1) 20%,var(--g3) 50%,var(--g1) 80%,transparent)}
+.lock{display:flex;align-items:center;gap:16px;margin-bottom:52px}
+.wm{font-variation-settings:"wdth" 116;font-weight:600;font-size:30px;letter-spacing:.01em}
+header h1{font-size:clamp(44px,7.6vw,104px)}
+header .sub{max-width:56ch;color:var(--paper-muted);font-size:18px;font-weight:300;margin:30px 0 0}
+.facts{display:flex;flex-wrap:wrap;margin-top:46px;border:1px solid var(--paper-line)}
+.fact{flex:1 1 190px;padding:20px 24px;border-right:1px solid var(--paper-line)}
+.fact:last-child{border-right:0}
+.fact b{display:block;font-variation-settings:"wdth" 110;font-weight:600;font-size:17px;margin-top:7px}
+
+section{padding:82px 0;border-bottom:1px solid var(--paper-line)}
+section:last-of-type{border-bottom:0}
+.sec-t{display:flex;align-items:baseline;justify-content:space-between;gap:20px;flex-wrap:wrap;margin-bottom:14px}
+.sec-t h2{font-size:clamp(26px,3.6vw,42px)}
+.note{max-width:68ch;color:var(--paper-muted);margin:0 0 44px;font-weight:300;font-size:16.5px}
+.note b{color:var(--vault);font-weight:500}
+.rev{opacity:0;transform:translateY(22px);transition:opacity .8s var(--ease),transform .8s var(--ease)}
+.rev.in{opacity:1;transform:none}
+
+.grid1{display:grid;gap:1px;background:var(--paper-line);border:1px solid var(--paper-line)}
+.marks{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.mc{background:var(--panel);padding:44px 20px;display:flex;flex-direction:column;align-items:center;gap:24px}
+.mc.pale{background:var(--paper)}
+.mc svg{transition:transform .8s var(--ease)}
+.mc:hover svg{transform:rotate(-90deg)}
+.sizes{display:flex;align-items:flex-end;gap:22px}
+.dont{grid-template-columns:repeat(auto-fit,minmax(210px,1fr));margin-top:1px}
+.dont div{background:var(--paper);padding:16px 20px;font-size:13px;color:var(--paper-muted);font-weight:300}
+.dont div::before{content:'✕';color:var(--err);margin-right:9px;font-size:11px}
+
+.ramp{display:grid;grid-template-columns:repeat(5,1fr);border:1px solid var(--paper-line)}
+.ramp div{height:118px;display:flex;flex-direction:column;justify-content:flex-end;padding:14px;gap:3px}
+.ramp code{font-size:10.5px;letter-spacing:.05em}
+.ramp span{font-size:9.5px;letter-spacing:.16em;text-transform:uppercase;opacity:.75}
+.edge{height:64px;border:1px solid transparent;margin-top:1px;
+  background-image:linear-gradient(var(--panel),var(--panel)),var(--metal);
+  background-origin:border-box;background-clip:padding-box,border-box;
+  display:flex;align-items:center;justify-content:center;font-size:10px;letter-spacing:.26em;text-transform:uppercase;color:var(--g4)}
+.neut{grid-template-columns:repeat(auto-fit,minmax(148px,1fr));margin-top:26px}
+.neut div{padding:18px 16px;min-height:104px;display:flex;flex-direction:column;justify-content:flex-end;gap:4px;font-size:11px}
+.neut b{font-size:12.5px;font-weight:600}
+.ct{width:100%;border-collapse:collapse;font-size:14px;margin-top:26px}
+.ct th,.ct td{text-align:left;padding:12px 16px;border-bottom:1px solid var(--paper-line)}
+.ct th{font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper-muted);font-weight:500}
+.ct tr:last-child td{border-bottom:0}
+.aaa{color:var(--g2)}
+
+.spec{border:1px solid var(--paper-line)}
+.srow{display:flex;gap:28px;align-items:baseline;padding:22px 26px;border-bottom:1px solid var(--paper-line);flex-wrap:wrap}
+.srow:last-child{border-bottom:0}
+.srow .m{min-width:186px;font-size:10px;letter-spacing:.2em;text-transform:uppercase;color:var(--paper-muted)}
+
+/* ================= BUTTONS ================= */
+.btn{font-family:inherit;font-size:11px;font-weight:400;letter-spacing:.24em;text-transform:uppercase;
+  cursor:pointer;position:relative;border:1px solid transparent;border-radius:1px;color:var(--g5);
+  height:60px;padding:0 34px;display:inline-flex;align-items:center;justify-content:center;
+  background-image:linear-gradient(var(--vault-dark),var(--vault-dark)),var(--metal);
+  background-origin:border-box;background-clip:padding-box,border-box;
+  background-size:100% 100%,220% 100%;background-position:0 0,0% 0;
+  transition:background-position .75s var(--ease),color .5s var(--ease),transform .2s var(--ease);min-width:230px}
+.btn:not(:disabled):hover{background-position:0 0,100% 0;color:#fff}
+.btn:not(:disabled):active{transform:scale(.985)}
+.btn:disabled{opacity:.28;cursor:not-allowed}
+.btn .t{transition:transform .55s var(--ease);display:inline-block}
+.btn .ar{position:absolute;right:28px;opacity:0;transform:translateX(-10px);
+  transition:opacity .5s var(--ease),transform .55s var(--ease);display:flex}
+.btn .ar svg{width:14px;height:14px}
+.btn:not(:disabled):hover .t{transform:translateX(-14px)}
+.btn:not(:disabled):hover .ar{opacity:1;transform:translateX(0)}
+.btn.sec{background-image:linear-gradient(var(--vault-dark),var(--vault-dark)),linear-gradient(var(--hair),var(--hair));color:var(--dim)}
+.btn.sec:not(:disabled):hover{color:var(--txt)}
+.btn.ter{height:auto;min-width:0;padding:0 0 12px;border:0;background:none;color:var(--g4);letter-spacing:.3em}
+.btn.ter::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;background:linear-gradient(90deg,var(--g1),var(--g3),var(--g1))}
+.btn.ter::before{content:'';position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--g5);
+  transform:scaleX(0);transform-origin:left;transition:transform .6s var(--ease)}
+.btn.ter:not(:disabled):hover::before{transform:scaleX(1)}
+.btn.pale{background-image:linear-gradient(var(--paper),var(--paper)),var(--metal-light);color:var(--g1)}
+.btn.pale:not(:disabled):hover{color:var(--paper-ink)}
+.btn.loading{pointer-events:none}.btn.loading .t{opacity:.2}
+.sp{width:14px;height:14px;border:1px solid currentColor;border-right-color:transparent;border-radius:50%;
+  animation:sp .9s linear infinite;position:absolute;left:50%;top:50%;margin:-7px 0 0 -7px}
+@keyframes sp{to{transform:rotate(360deg)}}
+.btnbay{grid-template-columns:repeat(auto-fit,minmax(300px,1fr))}
+.bb{background:var(--panel);color:var(--txt);padding:30px 28px;display:flex;flex-direction:column;gap:18px}
+.bb.pale{background:var(--paper);color:var(--paper-ink)}
+.bb.pale .lab,.bb.pale .why{color:var(--paper-muted)}
+.why{font-size:13px;color:var(--dim);font-weight:300;margin:0;line-height:1.65}
+
+/* ================= PRODUCT CARD — the motion piece ================= */
+.shelf{display:grid;grid-template-columns:repeat(auto-fit,minmax(238px,1fr));gap:20px;
+  background:var(--void);padding:32px;border:1px solid var(--paper-line)}
+.pc{position:relative;background:var(--vault-dark);border:1px solid var(--hair);border-radius:2px;
+  color:var(--txt);overflow:hidden;text-align:left;
+  transition:transform .45s var(--ease),border-color .45s var(--ease);
+  opacity:0;translate:0 18px}
+.pc.in{opacity:1;translate:0 0;transition:transform .45s var(--ease),border-color .45s var(--ease),
+  opacity .55s var(--ease),translate .55s var(--ease)}
+.pc:active{transform:translateY(-2px) scale(.992)}
+.pc-frame{position:relative;aspect-ratio:4/5;overflow:hidden;background:
+  radial-gradient(120% 90% at 50% 18%,#231E26 0%,var(--panel) 62%)}
+.pc-art{position:absolute;inset:0;display:grid;place-items:center;
+  transition:transform .85s var(--ease);will-change:transform}
+.pc-art svg{width:52%;height:52%;color:var(--g3);opacity:.5;
+  transition:opacity .7s var(--ease)}
+.pc-frame::after{content:'';position:absolute;left:0;right:0;bottom:0;height:1px;
+  background:linear-gradient(90deg,transparent,var(--g3),transparent);
+  transform:scaleX(0);transform-origin:left;transition:transform .7s var(--ease)}
+.pc-badge{position:absolute;top:11px;left:11px;z-index:2;font-size:9px;letter-spacing:.18em;
+  text-transform:uppercase;padding:5px 11px;border:1px solid transparent;color:var(--g5);
+  background-image:linear-gradient(var(--vault-dark),var(--vault-dark)),var(--metal);
+  background-origin:border-box;background-clip:padding-box,border-box}
+.pc-quick{position:absolute;top:11px;right:11px;z-index:2;display:flex;flex-direction:column;gap:7px}
+.pc-quick button{width:34px;height:34px;display:grid;place-items:center;cursor:pointer;
+  background:rgba(12,10,9,.72);border:1px solid var(--hair);border-radius:1px;color:var(--dim);
+  transition:color .35s var(--ease),border-color .35s var(--ease),opacity .4s var(--ease),translate .45s var(--ease)}
+.pc-quick button:hover{color:var(--g4);border-color:var(--g1)}
+.pc-quick button[aria-pressed="true"]{color:var(--g4);border-color:var(--g2)}
+.pc-quick svg{width:15px;height:15px}
+.pc-act{position:absolute;left:0;right:0;bottom:0;z-index:2;height:46px;
+  display:flex;align-items:center;justify-content:center;gap:9px;cursor:pointer;
+  font-family:inherit;font-size:10px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--g5);border:0;border-top:1px solid var(--g1);
+  background-image:linear-gradient(rgba(12,10,9,.94),rgba(12,10,9,.94)),var(--metal);
+  background-size:100% 100%,220% 100%;background-position:0 0,0% 0;
+  transition:translate .5s var(--ease),background-position .75s var(--ease)}
+.pc-act svg{width:13px;height:13px}
+.pc-body{padding:15px 16px 17px}
+.pc-body h5{margin:8px 0 11px;font-size:14px;font-weight:400;line-height:1.42}
+.pc-price{display:flex;align-items:baseline;gap:9px}
+.pc-price b{font-variation-settings:"wdth" 110;font-weight:600;font-size:18px;letter-spacing:.01em}
+.pc-price s{color:var(--dim);font-size:12.5px;font-weight:300;text-decoration-thickness:1px}
+.pc-stock{margin-top:10px;font-size:11px;color:var(--dim);font-weight:300;display:flex;align-items:center;gap:8px}
+.pc-stock i{width:6px;height:6px;border-radius:50%;background:var(--ok);flex:0 0 auto}
+
+/* No fine pointer = touch. Controls grow to the 44px minimum tap target;
+   a 34px control is a mis-tap on a phone. */
+@media (hover:none),(pointer:coarse){
+  .pc-quick{gap:9px}
+  .pc-quick button{width:44px;height:44px}
+  .pc-quick svg{width:17px;height:17px}
+}
+
+/* Hover behaviour is added ONLY where a real pointer exists.
+   On touch, the action bar and quick controls stay permanently visible —
+   a hover-only control is unreachable on a phone. */
+@media (hover:hover) and (pointer:fine){
+  .pc-act{translate:0 102%}
+  .pc-quick button{opacity:0;translate:8px 0}
+  .pc:hover,.pc:focus-within{transform:translateY(-4px);border-color:var(--g1)}
+  .pc:hover .pc-art,.pc:focus-within .pc-art{transform:scale(1.06)}
+  .pc:hover .pc-art svg,.pc:focus-within .pc-art svg{opacity:.72}
+  .pc:hover .pc-frame::after,.pc:focus-within .pc-frame::after{transform:scaleX(1)}
+  .pc:hover .pc-act,.pc:focus-within .pc-act{translate:0 0}
+  .pc-act:hover{background-position:0 0,100% 0;color:#fff}
+  .pc:hover .pc-quick button,.pc:focus-within .pc-quick button{opacity:1;translate:0 0}
+  .pc:hover .pc-quick button:nth-child(2){transition-delay:.06s}
+}
+.motion-note{display:grid;grid-template-columns:repeat(auto-fit,minmax(215px,1fr));gap:1px;
+  background:var(--paper-line);border:1px solid var(--paper-line);border-top:0}
+.motion-note div{background:var(--paper);padding:16px 18px}
+.motion-note b{display:block;font-size:12.5px;font-weight:600;margin-bottom:5px}
+.motion-note span{font-size:12.5px;color:var(--paper-muted);font-weight:300;line-height:1.55}
+
+.comp{grid-template-columns:repeat(auto-fit,minmax(268px,1fr))}
+.cp{background:var(--panel);color:var(--txt);padding:28px}
+.cp h4{font-size:14px;font-variation-settings:"wdth" 110;font-weight:600;margin-bottom:16px}
+.inp{width:100%;height:54px;padding:0 18px;background:var(--vault-dark);border:1px solid var(--hair);
+  border-radius:1px;color:var(--txt);font:inherit;font-size:14px;transition:border-color .5s var(--ease)}
+.inp::placeholder{color:var(--dim)}
+.inp:focus{outline:none;border-color:var(--g2)}
+.pills{display:flex;flex-wrap:wrap;gap:8px}
+.pill{border:1px solid var(--hair);background:transparent;color:var(--dim);border-radius:999px;padding:9px 18px;
+  font:inherit;font-size:11px;letter-spacing:.1em;text-transform:uppercase;cursor:pointer;
+  transition:background .45s var(--ease),color .45s var(--ease),border-color .45s var(--ease)}
+.pill[aria-pressed="true"]{background:var(--g2);border-color:var(--g2);color:#1A1203}
+.states{display:flex;flex-direction:column;gap:11px;font-size:12.5px}
+.states i{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:11px;vertical-align:middle}
+
+.found{grid-template-columns:repeat(auto-fit,minmax(232px,1fr))}
+.fo{background:var(--paper);padding:24px}
+.fo h4{font-size:13px;font-variation-settings:"wdth" 110;font-weight:600;margin-bottom:14px}
+.fo ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:8px;
+  font-size:13px;color:var(--paper-muted);font-weight:300}
+.fo ul b{color:var(--vault);font-weight:500}
+.sp-bar{display:flex;align-items:flex-end;gap:5px;margin-bottom:14px;height:56px}
+.sp-bar i{background:var(--g2);width:12px;display:block;opacity:.85}
+.rad{display:flex;gap:10px;align-items:flex-end;margin-bottom:14px}
+.rad i{width:44px;height:44px;background:var(--vault);display:block}
+
+.vgrid{grid-template-columns:repeat(auto-fit,minmax(258px,1fr))}
+.vc{background:var(--paper);padding:24px}
+.vc .y{color:var(--g2);font-size:10px;letter-spacing:.2em;text-transform:uppercase}
+.vc .n{color:var(--err);font-size:10px;letter-spacing:.2em;text-transform:uppercase;display:block;margin-top:16px}
+.vc p{margin:8px 0 0;font-size:14.5px;font-weight:300}
+.vc p.off{color:var(--paper-muted)}
+.rules{border:1px solid var(--g1);padding:38px}
+.rules h3{font-size:24px;margin-bottom:10px}
+.rules ul{margin:22px 0 0;padding-left:20px;display:flex;flex-direction:column;gap:12px;
+  font-size:14.5px;font-weight:300;color:var(--paper-muted)}
+.rules b{color:var(--vault);font-weight:500}
+footer{padding:50px 0 90px;color:var(--paper-muted);font-size:12.5px;font-weight:300}
+
+@media (prefers-reduced-motion:reduce){
+  *{transition-duration:.01ms!important;animation:none!important}
+  .rev,.pc{opacity:1;transform:none;translate:0 0}
+  @media (hover:hover) and (pointer:fine){.pc-act{translate:0 0}.pc-quick button{opacity:1;translate:0 0}}
+}
+@media(max-width:760px){.ramp{grid-template-columns:repeat(3,1fr)}.srow .m{flex-basis:100%;min-width:0}
+  .shelf{padding:18px;gap:14px}}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="wrap">
+    <div class="lock">
+      <svg width="46" height="46" viewBox="0 0 100 100" role="img" aria-label="Cartiva">
+        <mask id="k0"><rect width="100" height="100" fill="#000"/><circle cx="50" cy="50" r="44" fill="#fff"/>
+          <circle cx="50" cy="50" r="23" fill="#000"/><rect x="50" y="35" width="50" height="30" fill="#000"/></mask>
+        <rect width="100" height="100" fill="#1C1917" mask="url(#k0)"/>
+        <circle cx="68" cy="50" r="9" fill="#9A6B12"/>
+      </svg>
+      <span class="wm">Cartiva</span>
+    </div>
+    <h1 class="d">Everything has<br><span class="gold">a price tag.</span></h1>
+    <p class="sub">The identity system for a general marketplace — electronics, fashion, beauty, home, books, mobiles. Built on the one artefact every category shares.</p>
+    <div class="facts">
+      <div class="fact"><span class="lab">Direction</span><b>Vault</b></div>
+      <div class="fact"><span class="lab">Typeface</span><b>Archivo</b></div>
+      <div class="fact"><span class="lab">Mark</span><b>C + disc</b></div>
+      <div class="fact"><span class="lab">Primary action</span><b>Arrow Travel</b></div>
+    </div>
+  </div>
+</header>
+
+<section><div class="wrap rev">
+  <div class="sec-t"><h2 class="d">The mark</h2><span class="lab">Constructed, not drawn</span></div>
+  <p class="note">A ring with a rectangular bite taken from its right side, producing a <b>C</b>, with a disc seated in the mouth — a letter and a container at once. Every dimension comes from the geometry, so it reduces cleanly to 16px. No shopping-cart glyph: every marketplace already owns one, and the tag is the object that actually spans every category here. Hover a tile.</p>
+  <div class="grid1 marks">
+    <div class="mc pale">
+      <svg width="82" height="82" viewBox="0 0 100 100" role="img" aria-label="Mark on paper">
+        <mask id="k1"><rect width="100" height="100" fill="#000"/><circle cx="50" cy="50" r="44" fill="#fff"/>
+          <circle cx="50" cy="50" r="23" fill="#000"/><rect x="50" y="35" width="50" height="30" fill="#000"/></mask>
+        <rect width="100" height="100" fill="#1C1917" mask="url(#k1)"/><circle cx="68" cy="50" r="9" fill="#9A6B12"/></svg>
+      <span class="lab">On paper</span>
+    </div>
+    <div class="mc">
+      <svg width="82" height="82" viewBox="0 0 100 100" role="img" aria-label="Mark reversed">
+        <mask id="k2"><rect width="100" height="100" fill="#000"/><circle cx="50" cy="50" r="44" fill="#fff"/>
+          <circle cx="50" cy="50" r="23" fill="#000"/><rect x="50" y="35" width="50" height="30" fill="#000"/></mask>
+        <rect width="100" height="100" fill="#F2ECE1" mask="url(#k2)"/><circle cx="68" cy="50" r="9" fill="#E8C878"/></svg>
+      <span class="lab" style="color:var(--dim)">Reversed</span>
+    </div>
+    <div class="mc">
+      <div class="sizes">
+        <svg width="46" height="46" viewBox="0 0 100 100" role="img" aria-label="46 pixels"><mask id="k3"><rect width="100" height="100" fill="#000"/><circle cx="50" cy="50" r="44" fill="#fff"/><circle cx="50" cy="50" r="23" fill="#000"/><rect x="50" y="35" width="50" height="30" fill="#000"/></mask><rect width="100" height="100" fill="#F2ECE1" mask="url(#k3)"/><circle cx="68" cy="50" r="9" fill="#E8C878"/></svg>
+        <svg width="26" height="26" viewBox="0 0 100 100" role="img" aria-label="26 pixels"><mask id="k4"><rect width="100" height="100" fill="#000"/><circle cx="50" cy="50" r="44" fill="#fff"/><circle cx="50" cy="50" r="23" fill="#000"/><rect x="50" y="35" width="50" height="30" fill="#000"/></mask><rect width="100" height="100" fill="#F2ECE1" mask="url(#k4)"/><circle cx="68" cy="50" r="9" fill="#E8C878"/></svg>
+        <svg width="16" height="16" viewBox="0 0 100 100" role="img" aria-label="16 pixels minimum"><mask id="k5"><rect width="100" height="100" fill="#000"/><circle cx="50" cy="50" r="44" fill="#fff"/><circle cx="50" cy="50" r="23" fill="#000"/><rect x="50" y="35" width="50" height="30" fill="#000"/></mask><rect width="100" height="100" fill="#F2ECE1" mask="url(#k5)"/><circle cx="68" cy="50" r="9" fill="#E8C878"/></svg>
+      </div>
+      <span class="lab" style="color:var(--dim)">46 · 26 · 16 min</span>
+    </div>
+    <div class="mc">
+      <div class="lock" style="margin:0">
+        <svg width="32" height="32" viewBox="0 0 100 100" role="img" aria-label="Lockup"><mask id="k6"><rect width="100" height="100" fill="#000"/><circle cx="50" cy="50" r="44" fill="#fff"/><circle cx="50" cy="50" r="23" fill="#000"/><rect x="50" y="35" width="50" height="30" fill="#000"/></mask><rect width="100" height="100" fill="#F2ECE1" mask="url(#k6)"/><circle cx="68" cy="50" r="9" fill="#E8C878"/></svg>
+        <span class="wm" style="font-size:22px;color:var(--txt)">Cartiva</span>
+      </div>
+      <span class="lab" style="color:var(--dim)">Lockup · 96px min</span>
+    </div>
+  </div>
+  <div class="grid1 dont">
+    <div>Rotate, skew or stretch</div>
+    <div>Recolour off the ramp</div>
+    <div>Add shadow or bevel</div>
+    <div>Reintroduce a cart glyph</div>
+  </div>
+</div></section>
+
+<section><div class="wrap rev">
+  <div class="sec-t"><h2 class="d">Gold is never one hex</h2><span class="lab">The system rule</span></div>
+  <p class="note">A metal edge needs a shadow end, a body and a highlight, or it reads as a coloured line rather than metal. Five stops, always used as a ramp — <b>this single rule is what separates the system from a gold-coloured border</b>.</p>
+  <div class="ramp">
+    <div style="background:var(--g1);color:#F6E7BE"><span>Shadow</span><code>#5C3D06</code></div>
+    <div style="background:var(--g2);color:#1A1203"><span>Body</span><code>#9A6B12</code></div>
+    <div style="background:var(--g3);color:#1A1203"><span>Mid</span><code>#C79A3C</code></div>
+    <div style="background:var(--g4);color:#1A1203"><span>Highlight</span><code>#E8C878</code></div>
+    <div style="background:var(--g5);color:#1A1203"><span>Specular</span><code>#F6E7BE</code></div>
+  </div>
+  <div class="edge">the ramp, as an edge</div>
+  <div class="grid1 neut">
+    <div style="background:var(--void);color:var(--txt)"><b>Void</b><code>#08070A</code></div>
+    <div style="background:var(--panel);color:var(--txt)"><b>Panel</b><code>#161318</code></div>
+    <div style="background:var(--hair);color:var(--txt)"><b>Hairline</b><code>#2A252C</code></div>
+    <div style="background:var(--paper);color:var(--paper-ink)"><b>Paper</b><code>#FAFAF9</code></div>
+    <div style="background:var(--paper-line);color:var(--paper-ink)"><b>Paper line</b><code>#DED9D2</code></div>
+    <div style="background:var(--ok);color:#fff"><b>Success</b><code>#1F5F3F</code></div>
+  </div>
+  <table class="ct">
+    <thead><tr><th>Measured pair</th><th>Ratio</th><th>WCAG</th></tr></thead>
+    <tbody>
+      <tr><td>Gold highlight on Void</td><td class="tab">9.38 : 1</td><td class="aaa">AAA</td></tr>
+      <tr><td>Gold body on Paper</td><td class="tab">4.68 : 1</td><td class="aaa">AA</td></tr>
+      <tr><td>Text on Void</td><td class="tab">16.1 : 1</td><td class="aaa">AAA</td></tr>
+      <tr><td>Paper ink on Paper</td><td class="tab">18.9 : 1</td><td class="aaa">AAA</td></tr>
+    </tbody>
+  </table>
+  <p class="note" style="margin:22px 0 0"><b>Two deliberate exceptions.</b> Success stays a deep green — that mapping is a real-world convention and a redundancy for colour-blind users alongside icon and label; it never appears in the logo, nav, footer, or any CTA. And the darkest ground is <span class="tab">#08070A</span>, not pure black, because pure black smears on OLED panels during scroll.</p>
+</div></section>
+
+<section><div class="wrap rev">
+  <div class="sec-t"><h2 class="d">Archivo, two widths</h2><span class="lab">Width is the contrast</span></div>
+  <p class="note">Display runs expanded, body runs normal. The contrast comes from width rather than a second face — which keeps the system cohesive and gives it the signage character the tag idea wants. Archivo descends from grotesques built for price boards and wayfinding, and its tabular figures matter on a storefront full of prices.</p>
+  <div class="spec">
+    <div class="srow"><span class="m">Display · 600 · wdth 116</span><span class="d" style="font-size:clamp(32px,5vw,54px)">Everything, tagged</span></div>
+    <div class="srow"><span class="m">H2 · 600 · wdth 110</span><span class="d2" style="font-size:29px">Featured this week</span></div>
+    <div class="srow"><span class="m">Body · 400</span><span style="max-width:56ch">Arrives Tuesday if you order in the next four hours. Fourteen-day returns on everything except opened electronics.</span></div>
+    <div class="srow"><span class="m">Body light · 300</span><span style="max-width:56ch;font-weight:300;color:var(--paper-muted)">Sold by Cartiva. Ships from Cairo, tracked end to end.</span></div>
+    <div class="srow"><span class="m">Label · 500 · .28em</span><span class="lab">Women's fashion · Beauty · Home</span></div>
+    <div class="srow"><span class="m">Price · 600 · tabular</span><span class="d2 tab" style="font-size:27px">3,064 · 42,960 · 0123456789</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap rev">
+  <div class="sec-t"><h2 class="d">Arrow Travel</h2><span class="lab">The primary action</span></div>
+  <p class="note">At rest it is a centred label and nothing else. On hover the label steps left and a mark arrives in the space it vacated — <b>the composition changes, not the colour</b>. Underneath, the gold sweeps rather than snaps: the ramp is drawn at 220% width and its position is animated over 750ms, because CSS cannot transition a background-image. Hover slowly. Click to load.</p>
+  <div class="grid1 btnbay">
+    <div class="bb"><span class="lab">Primary</span>
+      <p class="why">Gold metal edge. Add to cart, buy, submit. One per screen.</p>
+      <div><button class="btn" data-load><span class="t">Add to cart</span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></div></div>
+    <div class="bb"><span class="lab">Secondary</span>
+      <p class="why">Same layout and sweep, hairline edge, no gold. Save, compare.</p>
+      <div><button class="btn sec" data-load><span class="t">Save</span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></div></div>
+    <div class="bb"><span class="lab">Tertiary</span>
+      <p class="why">Label over a gold rule that brightens left to right. Size guide, shipping, care.</p>
+      <div><button class="btn ter"><span class="t">Size &amp; fit</span></button></div></div>
+    <div class="bb pale"><span class="lab">Primary · light twin</span>
+      <p class="why">The same construction on paper, using the deep end of the ramp so it holds 4.68:1. This is what makes the system usable on category pages.</p>
+      <div><button class="btn pale" data-load><span class="t">Add to cart</span><span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></div></div>
+    <div class="bb"><span class="lab">Disabled</span>
+      <p class="why">28% opacity, no pointer, no sweep. Never a control that looks live and does nothing.</p>
+      <div><button class="btn" disabled><span class="t">Sold out</span></button></div></div>
+    <div class="bb"><span class="lab">Quiet pill</span>
+      <p class="why">Not a CTA. Filters and category chips only — full radius deliberately breaks the 1px rule so it can never read as a primary action.</p>
+      <div class="pills">
+        <button class="pill" aria-pressed="true">Electronics</button>
+        <button class="pill" aria-pressed="false">Fashion</button>
+        <button class="pill" aria-pressed="false">Beauty</button>
+      </div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap rev">
+  <div class="sec-t"><h2 class="d">The product card</h2><span class="lab">Five layers, one gesture</span></div>
+  <p class="note">The card is where the brand does most of its work, so its motion is authored rather than inherited. Hovering runs five things at once on a single 450–850ms curve: the card lifts, its edge warms to gold, the product scales inside a fixed frame, a gold hairline draws across the base, and the action bar rises. <b>Everything moves on transform and opacity only</b> — nothing reflows, so a grid of forty cards stays on the compositor thread.</p>
+  <div class="shelf">
+    <article class="pc" tabindex="0">
+      <div class="pc-frame">
+        <span class="pc-badge">Save 30%</span>
+        <div class="pc-quick">
+          <button aria-label="Save item" aria-pressed="false" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>
+          <button aria-label="Compare item" aria-pressed="false" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h11M4 17h11M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button>
+        </div>
+        <div class="pc-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M6 4h12l-1 16H7L6 4Z"/><path d="M9 8h6"/></svg></div>
+        <button class="pc-act" data-cart><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5v14M5 12h14"/></svg><span class="t">Add to cart</span></button>
+      </div>
+      <div class="pc-body">
+        <span class="lab">Men's fashion</span>
+        <h5>Orca Leather Boots, Anthracite</h5>
+        <div class="pc-price"><b class="tab">3,064</b><s class="tab">4,377</s></div>
+        <div class="pc-stock"><i></i>In stock — arrives Tue 12 Aug</div>
+      </div>
+    </article>
+
+    <article class="pc" tabindex="0">
+      <div class="pc-frame">
+        <div class="pc-quick">
+          <button aria-label="Save item" aria-pressed="false" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>
+          <button aria-label="Compare item" aria-pressed="false" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h11M4 17h11M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button>
+        </div>
+        <div class="pc-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><rect x="5" y="2" width="14" height="20" rx="2"/><path d="M10 18h4"/></svg></div>
+        <button class="pc-act" data-cart><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5v14M5 12h14"/></svg><span class="t">Add to cart</span></button>
+      </div>
+      <div class="pc-body">
+        <span class="lab">Mobiles</span>
+        <h5>Vector 12 Pro, 256GB Titanium</h5>
+        <div class="pc-price"><b class="tab">42,960</b></div>
+        <div class="pc-stock"><i style="background:var(--warn)"></i>Only 2 left</div>
+      </div>
+    </article>
+
+    <article class="pc" tabindex="0">
+      <div class="pc-frame">
+        <span class="pc-badge">New</span>
+        <div class="pc-quick">
+          <button aria-label="Save item" aria-pressed="true" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>
+          <button aria-label="Compare item" aria-pressed="false" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h11M4 17h11M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button>
+        </div>
+        <div class="pc-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M3 9h18v11a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9Z"/><path d="M3 9l2-6h14l2 6"/><path d="M12 3v6"/></svg></div>
+        <button class="pc-act" data-cart><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5v14M5 12h14"/></svg><span class="t">Add to cart</span></button>
+      </div>
+      <div class="pc-body">
+        <span class="lab">Home</span>
+        <h5>Kestrel Storage Cabinet, Oak</h5>
+        <div class="pc-price"><b class="tab">8,150</b></div>
+        <div class="pc-stock"><i></i>In stock — arrives Thu 14 Aug</div>
+      </div>
+    </article>
+
+    <article class="pc" tabindex="0">
+      <div class="pc-frame">
+        <div class="pc-quick">
+          <button aria-label="Save item" aria-pressed="false" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M20.8 4.6a5.5 5.5 0 0 0-7.8 0L12 5.7l-1-1.1a5.5 5.5 0 0 0-7.8 7.8l8.8 8.8 8.8-8.8a5.5 5.5 0 0 0 0-7.8Z"/></svg></button>
+          <button aria-label="Compare item" aria-pressed="false" data-toggle><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M4 7h11M4 17h11M18 4l3 3-3 3M18 14l3 3-3 3"/></svg></button>
+        </div>
+        <div class="pc-art"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="3"/></svg></div>
+        <button class="pc-act" data-cart><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5v14M5 12h14"/></svg><span class="t">Add to cart</span></button>
+      </div>
+      <div class="pc-body">
+        <span class="lab">Beauty</span>
+        <h5>Aurum Renewal Serum, 30ml</h5>
+        <div class="pc-price"><b class="tab">1,290</b><s class="tab">1,720</s></div>
+        <div class="pc-stock"><i></i>In stock — arrives Tue 12 Aug</div>
+      </div>
+    </article>
+  </div>
+
+  <div class="motion-note">
+    <div><b>Lift &amp; warm</b><span>translateY(-4px) and the edge steps hairline → gold. On dark, elevation is a tone step, never a shadow — shadows do not read on near-black.</span></div>
+    <div><b>Contained zoom</b><span>The product scales 1.06 inside a fixed 4:5 frame with overflow hidden. The card's own footprint never changes, so neighbours never shift.</span></div>
+    <div><b>Rising action</b><span>The add-to-cart bar translates up from the frame's base, and its gold sweeps on its own hover — the same 220% mechanic as Arrow Travel.</span></div>
+    <div><b>Reachable on touch</b><span>All hover behaviour sits inside <span class="tab">@media (hover:hover)</span>. On a phone the action bar and quick controls are permanently visible — a hover-only control is unreachable there.</span></div>
+    <div><b>Keyboard parity</b><span><span class="tab">:focus-within</span> mirrors every hover state, so tabbing to a card reveals exactly what a mouse reveals.</span></div>
+    <div><b>Grid entrance</b><span>Cards stagger in at 60ms each on <span class="tab">expo.out</span>. No overshoot — a bounce on a price grid reads as sloppy, not premium.</span></div>
+  </div>
+</div></section>
+
+<section><div class="wrap rev">
+  <div class="sec-t"><h2 class="d">Components</h2><span class="lab">The system at work</span></div>
+  <div class="grid1 comp">
+    <div class="cp"><h4>Input</h4>
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <input class="inp" placeholder="Search 40,000 products" aria-label="Search products">
+        <input class="inp" placeholder="Disabled" disabled style="opacity:.4">
+        <span class="lab" style="margin-top:2px">Focus lifts the edge to gold body</span>
+      </div></div>
+    <div class="cp"><h4>Semantic states</h4>
+      <div class="states">
+        <span><i style="background:var(--ok)"></i>In stock — arrives Tue 12 Aug</span>
+        <span><i style="background:var(--warn)"></i>Only 2 left</span>
+        <span><i style="background:var(--err)"></i>That code has expired</span>
+        <span class="lab" style="margin-top:6px">Colour is never the only signal</span>
+      </div></div>
+    <div class="cp"><h4>Motion tokens</h4>
+      <div class="states">
+        <span>Micro-interaction — <b class="tab">250–500ms</b></span>
+        <span>Card gesture — <b class="tab">450–850ms</b></span>
+        <span>Gold sweep — <b class="tab">750ms</b></span>
+        <span>Shared element — <b class="tab">700ms</b></span>
+        <span style="color:var(--dim);font-weight:300;font-size:12.5px;margin-top:6px">Easing cubic-bezier(.22,1,.36,1) everywhere. No spring, no bounce.</span>
+      </div></div>
+    <div class="cp"><h4>Icons</h4>
+      <div class="states">
+        <span>24px grid, <b>1.4px</b> stroke, 2px corner radius</span>
+        <span>One library throughout</span>
+        <span>Filled reserved for active state</span>
+        <span style="color:var(--dim);font-weight:300;font-size:12.5px;margin-top:6px">Never an emoji or Unicode glyph in place of an icon.</span>
+      </div></div>
+  </div>
+</div></section>
+
+<section><div class="wrap rev">
+  <div class="sec-t"><h2 class="d">Foundations</h2><span class="lab">Spacing · radius · elevation</span></div>
+  <div class="grid1 found">
+    <div class="fo"><h4>Spacing</h4>
+      <div class="sp-bar"><i style="height:4px"></i><i style="height:8px"></i><i style="height:16px"></i><i style="height:24px"></i><i style="height:32px"></i><i style="height:48px"></i><i style="height:56px"></i></div>
+      <ul><li><b>4 · 8 · 16 · 24 · 32 · 48 · 72 · 112</b></li><li>More space above a heading than below it, always.</li></ul></div>
+    <div class="fo"><h4>Radius</h4>
+      <div class="rad"><i style="border-radius:1px"></i><i style="border-radius:2px"></i><i style="border-radius:3px"></i><i style="border-radius:999px"></i></div>
+      <ul><li><b>1px</b> buttons, inputs</li><li><b>2px</b> cards, panels</li><li><b>3px</b> sheets, modals</li><li><b>full</b> filter pills only</li></ul></div>
+    <div class="fo"><h4>Elevation</h4>
+      <ul><li><b>On dark</b> — a hairline plus a tone step. Shadows do not read on near-black.</li><li><b>On light</b> — real offset plus soft blur.</li><li>Never a zero-offset coloured halo.</li></ul></div>
+    <div class="fo"><h4>Imagery</h4>
+      <ul><li>The product, on a plain or softly defocused ground. Objects over lifestyle.</li><li>Even neutral light — <b>no golden-hour cast</b>, it re-codes the brand as food.</li><li>Never produce, stalls, baskets or crates.</li></ul></div>
+  </div>
+  <p class="note" style="margin:26px 0 0">The product silhouettes on the cards above are placeholder line art, not photography — this build has no owned product images, and the honesty rules below forbid borrowing any.</p>
+</div></section>
+
+<section><div class="wrap rev">
+  <div class="sec-t"><h2 class="d">Voice</h2><span class="lab">Direct · confident · unfussy</span></div>
+  <div class="grid1 vgrid">
+    <div class="vc"><span class="y">We say</span><p>In stock. Arrives Tue 12 Aug.</p>
+      <span class="n">Not</span><p class="off">Great news! Your item is available!</p></div>
+    <div class="vc"><span class="y">We say</span><p>That code has expired. Try another.</p>
+      <span class="n">Not</span><p class="off">Oops! Something went wrong.</p></div>
+    <div class="vc"><span class="y">We say</span><p>Nothing saved yet. Browse electronics →</p>
+      <span class="n">Not</span><p class="off">Your wishlist is feeling lonely!</p></div>
+  </div>
+  <p class="note" style="margin:26px 0 0"><b>Prohibited words:</b> fresh, farm, organic (grocery-coded); seamless, revolutionary, best-in-class, curated; unlock, supercharge, elevate; and any invented statistic.</p>
+</div></section>
+
+<section><div class="wrap rev">
+  <div class="rules">
+    <h3 class="d2">Honesty rules</h3>
+    <p style="margin:0;color:var(--paper-muted);max-width:66ch;font-weight:300">A portfolio build on a public demo API. No real customers, revenue, ratings or testimonials — so it claims none. Violations here are brand violations, not content bugs.</p>
+    <ul>
+      <li><b>No fabricated social proof.</b> The pre-Cartiva build shipped "50K+ Users", a "4.9 Rating", and a testimonial from a person who does not exist. None of it returns.</li>
+      <li><b>No dead controls.</b> If it renders, it does something. The Google and Facebook sign-in buttons were removed rather than faked.</li>
+      <li><b>No unowned assets.</b> The old login hero was hot-linked from a design tool's temp bucket with the generator prompt still sitting in its alt text.</li>
+    </ul>
+  </div>
+</div></section>
+
+<footer><div class="wrap">Cartiva identity v1.0 · approved 2026-08-20 · source of truth <code>docs/brand-guidelines.md</code> · supersedes FreshCart and Souqly</div></footer>
+
+<script>
+document.querySelectorAll('.btn[data-load],.pc-act[data-cart]').forEach(function(b){
+  b.addEventListener('click',function(e){
+    e.stopPropagation();
+    if(b.classList.contains('loading'))return;
+    var s=document.createElement('span');s.className='sp';
+    b.classList.add('loading');b.appendChild(s);
+    setTimeout(function(){b.classList.remove('loading');s.remove();},1500);
+  });
+});
+document.querySelectorAll('.pill,[data-toggle]').forEach(function(p){
+  p.addEventListener('click',function(e){
+    e.stopPropagation();
+    p.setAttribute('aria-pressed',p.getAttribute('aria-pressed')==='true'?'false':'true');
+  });
+});
+var rv=document.querySelectorAll('.rev'),pcs=document.querySelectorAll('.pc');
+function showAll(){rv.forEach(function(e){e.classList.add('in')});pcs.forEach(function(e){e.classList.add('in')});}
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}})},
+    {threshold:0,rootMargin:'0px 0px -6% 0px'});
+  rv.forEach(function(e){io.observe(e)});
+  // grid entrance: 60ms stagger, expo.out — no overshoot on a price grid
+  var gio=new IntersectionObserver(function(es){es.forEach(function(e){
+    if(e.isIntersecting){
+      var i=[].indexOf.call(pcs,e.target);
+      setTimeout(function(){e.target.classList.add('in')},i*60);
+      gio.unobserve(e.target);
+    }})},{threshold:0,rootMargin:'0px 0px -4% 0px'});
+  pcs.forEach(function(e){gio.observe(e)});
+  setTimeout(showAll,1800);
+}else showAll();
+</script>
+</body>
+</html>

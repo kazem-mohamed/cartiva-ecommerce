@@ -209,132 +209,13 @@ export default function AddressesPage() {
 
   return (
     <>
-      <div className="min-h-screen bg-gray-50/50">
-        <div className="bg-gradient-to-br from-primary-600 via-primary-500 to-primary-400 text-white">
-          <div className="container mx-auto px-4 py-10 sm:py-12">
-            <nav className="flex items-center gap-2 text-sm text-white/70 mb-6">
-              <a className="hover:text-white transition-colors duration-200" href="/">
-                Home
-              </a>
-              <span className="text-white/40">/</span>
-              <span className="text-white font-medium">My Account</span>
-            </nav>
-            <div className="flex items-center gap-5">
-              <div className="w-16 h-16 rounded-2xl bg-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl ring-1 ring-white/30">
-                <svg
-                  data-prefix="fas"
-                  data-icon="user"
-                  className="svg-inline--fa fa-user text-3xl"
-                  role="img"
-                  viewBox="0 0 448 512"
-                  aria-hidden="true"
-                >
-                  <path
-                    fill="currentColor"
-                    d="M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240zm-29.7 56C95.8 304 16 383.8 16 482.3 16 498.7 29.3 512 45.7 512l356.6 0c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3l-59.4 0z"
-                  />
-                </svg>
-              </div>
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold tracking-tight">My Account</h1>
-                <p className="text-white/80 mt-1">Manage your addresses and account settings</p>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <div className="container mx-auto px-4 py-8">
-          <div className="flex flex-col lg:flex-row gap-6 lg:gap-8">
-            <aside className="w-full lg:w-72 shrink-0">
-              <nav className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-                <div className="p-4 border-b border-gray-100">
-                  <h2 className="font-bold text-gray-900">My Account</h2>
-                </div>
-                <ul className="p-2">
-                  <li>
-                    <a
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group bg-primary-50 text-primary-700"
-                      href="/profile/addresses"
-                    >
-                      <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors bg-primary-500 text-white">
-                        <svg
-                          data-prefix="fas"
-                          data-icon="location-dot"
-                          className="svg-inline--fa fa-location-dot text-sm"
-                          role="img"
-                          viewBox="0 0 384 512"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fill="currentColor"
-                            d="M0 188.6C0 84.4 86 0 192 0S384 84.4 384 188.6c0 119.3-120.2 262.3-170.4 316.8-11.8 12.8-31.5 12.8-43.3 0-50.2-54.5-170.4-197.5-170.4-316.8zM192 256a64 64 0 1 0 0-128 64 64 0 1 0 0 128z"
-                          />
-                        </svg>
-                      </div>
-                      <span className="font-medium flex-1">My Addresses</span>
-                      <svg
-                        data-prefix="fas"
-                        data-icon="chevron-right"
-                        className="svg-inline--fa fa-chevron-right text-xs transition-transform text-primary-500"
-                        role="img"
-                        viewBox="0 0 320 512"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M311.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L243.2 256 73.9 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"
-                        />
-                      </svg>
-                    </a>
-                  </li>
-                  <li>
-                    <a
-                      className="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 group text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                      href="/profile/settings"
-                    >
-                      <div className="w-9 h-9 rounded-lg flex items-center justify-center transition-colors bg-gray-100 text-gray-500 group-hover:bg-gray-200">
-                        <svg
-                          data-prefix="fas"
-                          data-icon="gear"
-                          className="svg-inline--fa fa-gear text-sm"
-                          role="img"
-                          viewBox="0 0 512 512"
-                          aria-hidden="true"
-                        >
-                          <path
-                            fill="currentColor"
-                            d="M195.1 9.5C198.1-5.3 211.2-16 226.4-16l59.8 0c15.2 0 28.3 10.7 31.3 25.5L332 79.5c14.1 6 27.3 13.7 39.3 22.8l67.8-22.5c14.4-4.8 30.2 1.2 37.8 14.4l29.9 51.8c7.6 13.2 4.9 29.8-6.5 39.9L447 233.3c.9 7.4 1.3 15 1.3 22.7s-.5 15.3-1.3 22.7l53.4 47.5c11.4 10.1 14 26.8 6.5 39.9l-29.9 51.8c-7.6 13.1-23.4 19.2-37.8 14.4l-67.8-22.5c-12.1 9.1-25.3 16.7-39.3 22.8l-14.4 69.9c-3.1 14.9-16.2 25.5-31.3 25.5l-59.8 0c-15.2 0-28.3-10.7-31.3-25.5l-14.4-69.9c-14.1-6-27.2-13.7-39.3-22.8L73.5 432.3c-14.4 4.8-30.2-1.2-37.8-14.4L5.8 366.1c-7.6-13.2-4.9-29.8 6.5-39.9l53.4-47.5c-.9-7.4-1.3-15-1.3-22.7s.5-15.3 1.3-22.7L12.3 185.8c-11.4-10.1-14-26.8-6.5-39.9L35.7 94.1c7.6-13.2 23.4-19.2 37.8-14.4l67.8 22.5c12.1-9.1 25.3-16.7 39.3-22.8L195.1 9.5zM256.3 336a80 80 0 1 0 -.6-160 80 80 0 1 0 .6 160z"
-                          />
-                        </svg>
-                      </div>
-                      <span className="font-medium flex-1">Settings</span>
-                      <svg
-                        data-prefix="fas"
-                        data-icon="chevron-right"
-                        className="svg-inline--fa fa-chevron-right text-xs transition-transform text-gray-400"
-                        role="img"
-                        viewBox="0 0 320 512"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fill="currentColor"
-                          d="M311.1 233.4c12.5 12.5 12.5 32.8 0 45.3l-192 192c-12.5 12.5-32.8 12.5-45.3 0s-12.5-32.8 0-45.3L243.2 256 73.9 86.6c-12.5-12.5-12.5-32.8 0-45.3s32.8-12.5 45.3 0l192 192z"
-                        />
-                      </svg>
-                    </a>
-                  </li>
-                </ul>
-              </nav>
-            </aside>
-
-            <main className="flex-1 min-w-0">
               <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-6">
                 <div>
-                  <h2 className="text-xl font-bold text-gray-900">My Addresses</h2>
-                  <p className="text-gray-500 text-sm mt-1">Manage your saved delivery addresses</p>
+                  <h2 className="text-xl font-bold text-ink">My Addresses</h2>
+                  <p className="text-ink-muted text-sm mt-1">Manage your saved delivery addresses</p>
                 </div>
                 <button
-                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/25"
+                  className="inline-flex items-center gap-2 px-5 py-2.5 rounded-[16px] bg-vault text-white font-semibold transition-transform duration-[280ms] ease-[var(--ease-hover)] hover:scale-[1.02] shadow-[var(--shadow)]"
                   type="button"
                   onClick={handleOpenModal}
                 >
@@ -356,26 +237,26 @@ export default function AddressesPage() {
               </div>
 
               {!isAuthenticated && status !== 'loading' && (
-                <div className="bg-white border border-amber-200 rounded-2xl p-6 text-sm text-amber-700">
+                <div className="bg-white border border-warning/30 rounded-[20px] p-6 text-sm text-warning">
                   Please login to view and manage your addresses.
                 </div>
               )}
 
-              {isAuthenticated && error && <p className="text-sm text-red-500 mb-4">{error}</p>}
+              {isAuthenticated && error && <p className="text-sm text-danger mb-4">{error}</p>}
 
               {isAuthenticated && loading && (
-                <div className="bg-white rounded-3xl border border-gray-100 p-10 text-center text-gray-500">
+                <div className="bg-white rounded-[24px] border border-line-soft p-10 text-center text-ink-muted">
                   Loading your addresses...
                 </div>
               )}
 
               {isAuthenticated && !loading && totalAddresses === 0 && (
-                <div className="bg-white rounded-3xl border border-gray-100 p-12 text-center">
-                  <div className="w-20 h-20 rounded-full bg-gray-100 flex items-center justify-center mx-auto mb-5">
+                <div className="bg-white rounded-[24px] border border-line-soft p-12 text-center">
+                  <div className="w-20 h-20 rounded-full bg-sunk flex items-center justify-center mx-auto mb-5">
                     <svg
                       data-prefix="fas"
                       data-icon="location-dot"
-                      className="svg-inline--fa fa-location-dot text-3xl text-gray-400"
+                      className="svg-inline--fa fa-location-dot text-3xl text-ink-muted"
                       role="img"
                       viewBox="0 0 384 512"
                       aria-hidden="true"
@@ -386,12 +267,12 @@ export default function AddressesPage() {
                       />
                     </svg>
                   </div>
-                  <h3 className="text-lg font-bold text-gray-900 mb-2">No Addresses Yet</h3>
-                  <p className="text-gray-500 mb-6 max-w-sm mx-auto">
+                  <h3 className="text-lg font-bold text-ink mb-2">No Addresses Yet</h3>
+                  <p className="text-ink-muted mb-6 max-w-sm mx-auto">
                     Add your first delivery address to make checkout faster and easier.
                   </p>
                   <button
-                    className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors shadow-lg shadow-primary-600/25"
+                    className="inline-flex items-center gap-2 px-6 py-3 rounded-[16px] bg-vault text-white font-semibold transition-transform duration-[280ms] ease-[var(--ease-hover)] hover:scale-[1.02] shadow-[var(--shadow)]"
                     type="button"
                     onClick={handleOpenModal}
                   >
@@ -418,16 +299,16 @@ export default function AddressesPage() {
                   {addresses.map((address) => (
                     <div
                       key={address._id}
-                      className="bg-white rounded-3xl border border-gray-100 p-6 shadow-sm"
+                      className="bg-white rounded-[24px] border border-line-soft p-6 shadow-[var(--shadow)]"
                     >
                       <div className="flex items-start justify-between gap-4">
                         <div>
-                          <h3 className="text-lg font-bold text-gray-900">{address.name}</h3>
-                          <p className="text-sm text-gray-500 mt-2">{address.details}</p>
+                          <h3 className="text-lg font-bold text-ink">{address.name}</h3>
+                          <p className="text-sm text-ink-muted mt-2">{address.details}</p>
                         </div>
                         <div className="flex items-center gap-2">
                           <button
-                            className="w-9 h-9 rounded-lg bg-gray-100 text-gray-600 hover:bg-primary-100 hover:text-primary-600 flex items-center justify-center transition-colors"
+                            className="w-9 h-9 rounded-lg bg-sunk text-ink-muted hover:bg-gold/10 hover:text-gold flex items-center justify-center transition-colors"
                             title="Edit address"
                             type="button"
                             onClick={() => handleEditAddress(address)}
@@ -447,7 +328,7 @@ export default function AddressesPage() {
                             </svg>
                           </button>
                           <button
-                            className="w-9 h-9 rounded-lg bg-red-50 text-red-600 hover:bg-red-100 hover:text-red-700 flex items-center justify-center transition-colors disabled:opacity-50"
+                            className="w-9 h-9 rounded-lg bg-danger/5 text-danger hover:bg-danger/10 hover:text-danger flex items-center justify-center transition-colors disabled:opacity-50"
                             title="Delete address"
                             type="button"
                             onClick={() => handleConfirmDelete(address._id)}
@@ -469,10 +350,10 @@ export default function AddressesPage() {
                           </button>
                         </div>
                       </div>
-                      <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-gray-500">
+                      <div className="mt-4 flex flex-col sm:flex-row sm:items-center gap-4 text-sm text-ink-muted">
                         <div className="flex items-center gap-2">
                           <svg
-                            className="h-4 w-4 text-gray-400"
+                            className="h-4 w-4 text-ink-muted"
                             viewBox="0 0 384 512"
                             aria-hidden="true"
                           >
@@ -484,7 +365,7 @@ export default function AddressesPage() {
                           {address.city}
                         </div>
                         <div className="flex items-center gap-2">
-                          <svg className="h-4 w-4 text-gray-400" viewBox="0 0 512 512" aria-hidden="true">
+                          <svg className="h-4 w-4 text-ink-muted" viewBox="0 0 512 512" aria-hidden="true">
                             <path
                               fill="currentColor"
                               d="M493.4 24.6l-104-24c-11.1-2.6-22.7 3.3-27.5 13.9l-48 104c-4.5 9.7-1.8 21.2 6.9 28.1l60.6 49.6c-36.2 76.6-98.8 139.1-175.4 175.4l-49.6-60.6c-6.8-8.3-18.3-11.5-28.1-6.9l-104 48c-10.6 4.9-16.5 16.4-13.9 27.5l24 104c2.2 9.4 10.5 16.1 20.1 16.1C291.2 512 512 291.2 512 24.5c0-9.6-6.7-17.9-16.1-20.1z"
@@ -497,10 +378,6 @@ export default function AddressesPage() {
                   ))}
                 </div>
               )}
-            </main>
-          </div>
-        </div>
-      </div>
 
       {isModalOpen && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
@@ -509,13 +386,13 @@ export default function AddressesPage() {
             onClick={handleCloseModal}
             aria-hidden="true"
           />
-          <div className="relative bg-white rounded-3xl shadow-2xl w-full max-w-lg p-6 sm:p-8 animate-in zoom-in-95 duration-200">
+          <div className="relative bg-white rounded-[24px] shadow-2xl w-full max-w-lg p-6 sm:p-8 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between mb-6">
-              <h2 className="text-xl font-bold text-gray-900">
+              <h2 className="text-xl font-bold text-ink">
                 {activeAddressId ? 'Update Address' : 'Add New Address'}
               </h2>
               <button
-                className="w-9 h-9 rounded-lg bg-gray-100 text-gray-600 hover:bg-gray-200 flex items-center justify-center transition-colors"
+                className="w-9 h-9 rounded-lg bg-sunk text-ink-muted hover:bg-line flex items-center justify-center transition-colors"
                 type="button"
                 onClick={handleCloseModal}
               >
@@ -537,11 +414,11 @@ export default function AddressesPage() {
 
             <form className="space-y-5" onSubmit={handleSubmit}>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Address Name</label>
+                <label className="block text-sm font-medium text-ink-soft mb-2">Address Name</label>
                 <input
                   name="name"
                   placeholder="e.g. Home, Office"
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
+                  className="w-full px-4 py-3 rounded-[16px] border border-line focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition-all"
                   required
                   type="text"
                   value={formData.name}
@@ -549,12 +426,12 @@ export default function AddressesPage() {
                 />
               </div>
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">Full Address</label>
+                <label className="block text-sm font-medium text-ink-soft mb-2">Full Address</label>
                 <textarea
                   name="details"
                   placeholder="Street, building, apartment..."
                   rows={3}
-                  className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all resize-none"
+                  className="w-full px-4 py-3 rounded-[16px] border border-line focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition-all resize-none"
                   required
                   value={formData.details}
                   onChange={handleChange}
@@ -562,11 +439,11 @@ export default function AddressesPage() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">Phone Number</label>
+                  <label className="block text-sm font-medium text-ink-soft mb-2">Phone Number</label>
                   <input
                     name="phone"
                     placeholder="01xxxxxxxxx"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-[16px] border border-line focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition-all"
                     required
                     type="tel"
                     value={formData.phone}
@@ -574,11 +451,11 @@ export default function AddressesPage() {
                   />
                 </div>
                 <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-2">City</label>
+                  <label className="block text-sm font-medium text-ink-soft mb-2">City</label>
                   <input
                     name="city"
                     placeholder="Cairo"
-                    className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:border-primary-500 focus:ring-2 focus:ring-primary-500/20 outline-none transition-all"
+                    className="w-full px-4 py-3 rounded-[16px] border border-line focus:border-gold focus:ring-2 focus:ring-gold/20 outline-none transition-all"
                     required
                     type="text"
                     value={formData.city}
@@ -587,19 +464,19 @@ export default function AddressesPage() {
                 </div>
               </div>
 
-              {formError && <p className="text-sm text-red-500">{formError}</p>}
+              {formError && <p className="text-sm text-danger">{formError}</p>}
 
               <div className="flex items-center gap-3 pt-4">
                 <button
                   type="button"
-                  className="flex-1 py-3 px-6 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors"
+                  className="flex-1 py-3 px-6 rounded-[16px] bg-sunk text-ink-soft font-semibold hover:bg-line transition-colors"
                   onClick={handleCloseModal}
                 >
                   Cancel
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 py-3 px-6 rounded-xl bg-primary-600 text-white font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50 shadow-lg shadow-primary-600/25"
+                  className="flex-1 py-3 px-6 rounded-[16px] bg-vault text-white font-semibold transition-transform duration-[280ms] ease-[var(--ease-hover)] hover:scale-[1.02] disabled:opacity-50 disabled:hover:scale-100 shadow-[var(--shadow)]"
                   disabled={saving}
                 >
                   {saving ? (activeAddressId ? 'Updating...' : 'Adding...') : activeAddressId ? 'Update Address' : 'Add Address'}
@@ -613,15 +490,15 @@ export default function AddressesPage() {
       {confirmDeleteId && (
         <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
           <div className="absolute inset-0 bg-black/50 backdrop-blur-sm" aria-hidden="true" />
-          <div className="relative bg-white rounded-2xl shadow-2xl w-full max-w-md p-6">
-            <h3 className="text-lg font-bold text-gray-900">Delete Address?</h3>
-            <p className="text-sm text-gray-500 mt-2">
+          <div className="relative bg-white rounded-[20px] shadow-2xl w-full max-w-md p-6">
+            <h3 className="text-lg font-bold text-ink">Delete Address?</h3>
+            <p className="text-sm text-ink-muted mt-2">
               This will permanently remove the address from your account.
             </p>
             <div className="flex items-center gap-3 mt-6">
               <button
                 type="button"
-                className="flex-1 py-2.5 px-4 rounded-xl bg-gray-100 text-gray-700 font-semibold hover:bg-gray-200 transition-colors"
+                className="flex-1 py-2.5 px-4 rounded-[16px] bg-sunk text-ink-soft font-semibold hover:bg-line transition-colors"
                 onClick={() => setConfirmDeleteId(null)}
                 disabled={!!deletingId}
               >
@@ -629,7 +506,7 @@ export default function AddressesPage() {
               </button>
               <button
                 type="button"
-                className="flex-1 py-2.5 px-4 rounded-xl bg-red-600 text-white font-semibold hover:bg-red-700 transition-colors disabled:opacity-60"
+                className="flex-1 py-2.5 px-4 rounded-[16px] bg-danger text-white font-semibold hover:bg-danger transition-colors disabled:opacity-60"
                 onClick={handleDeleteAddress}
                 disabled={!!deletingId}
               >
@@ -643,10 +520,10 @@ export default function AddressesPage() {
       {toast && (
         <div className="fixed top-6 right-6 z-[60]">
           <div
-            className={`rounded-xl px-4 py-3 shadow-lg text-sm font-medium ${
+            className={`rounded-[16px] px-4 py-3 shadow-[var(--shadow-lift)] text-sm font-medium ${
               toast.type === 'success'
                 ? 'bg-emerald-600 text-white'
-                : 'bg-red-600 text-white'
+                : 'bg-danger text-white'
             }`}
           >
             {toast.message}

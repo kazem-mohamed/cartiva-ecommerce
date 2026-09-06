@@ -3,20 +3,22 @@
 import { useEffect, useState } from 'react'
 import { useSession } from 'next-auth/react'
 import { Spinner } from '@/component/ui/Spinner'
-
-const CART_API = 'https://ecommerce.routemisr.com/api/v2/cart'
-
-function notifyCartUpdate() {
-  if (typeof window !== 'undefined') {
-    window.dispatchEvent(new Event('cartUpdated'))
-  }
-}
+import { addToCart as apiAddToCart, getCart, notifyCartUpdate, updateCartQuantity } from '@/lib/cart'
 
 type CartQuantityProps = {
   productId: string
   max: number
   price: number
   discounted?: number
+}
+
+type CartProductEntry = {
+  count?: number
+  product?: {
+    _id?: string
+    id?: string
+  }
+  productId?: string
 }
 
 export default function CartQuantity({ productId, max, price, discounted }: CartQuantityProps) {
@@ -43,18 +45,11 @@ export default function CartQuantity({ productId, max, price, discounted }: Cart
 
     const loadCount = async () => {
       try {
-        const res = await fetch(CART_API, {
-          headers: {
-            token,
-            Authorization: `Bearer ${token}`,
-            'Cache-Control': 'no-store',
-          },
-          cache: 'no-store',
-        })
-        if (!res.ok) return
-        const json = await res.json().catch(() => null)
-        const items = json?.data?.products ?? []
-        const match = items.find((item: any) => {
+        const cart = await getCart(token).catch(() => null)
+        const items = Array.isArray(cart?.products)
+          ? (cart.products as CartProductEntry[])
+          : []
+        const match = items.find((item) => {
           const id = item?.product?._id ?? item?.product?.id ?? item?.productId
           return id === productId
         })
@@ -74,42 +69,13 @@ export default function CartQuantity({ productId, max, price, discounted }: Cart
     }
 
     loadCount()
+    window.addEventListener('cartUpdated', loadCount)
+
     return () => {
+      window.removeEventListener('cartUpdated', loadCount)
       active = false
     }
   }, [token, productId])
-
-  const addToCart = async () => {
-    const res = await fetch(CART_API, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        token: token ?? '',
-        Authorization: `Bearer ${token ?? ''}`,
-      },
-      body: JSON.stringify({ productId }),
-    })
-
-    if (!res.ok) {
-      throw new Error('Failed to add to cart')
-    }
-  }
-
-  const updateRemoteCount = async (nextCount: number) => {
-    const res = await fetch(`${CART_API}/${productId}`, {
-      method: 'PUT',
-      headers: {
-        'Content-Type': 'application/json',
-        token: token ?? '',
-        Authorization: `Bearer ${token ?? ''}`,
-      },
-      body: JSON.stringify({ count: nextCount }),
-    })
-
-    if (!res.ok) {
-      throw new Error('Failed to update cart')
-    }
-  }
 
   const updateCount = async (nextCount: number) => {
     if (!inStock) return
@@ -125,12 +91,12 @@ export default function CartQuantity({ productId, max, price, discounted }: Cart
 
     try {
       if (!inCart) {
-        await addToCart()
+        await apiAddToCart(productId, token)
         setInCart(true)
       }
 
       if (nextCount !== count || !inCart) {
-        await updateRemoteCount(nextCount)
+        await updateCartQuantity(productId, nextCount, token)
       }
 
       setCount(nextCount)
@@ -145,17 +111,17 @@ export default function CartQuantity({ productId, max, price, discounted }: Cart
   return (
     <>
       <div className="mb-6">
-        <label className="block text-sm font-medium text-gray-700 mb-2">Quantity</label>
+        <label className="block text-sm font-medium text-ink-soft mb-2">Quantity</label>
         <div className="flex items-center gap-4">
-          <div className="flex items-center border-2 border-gray-200 rounded-lg overflow-hidden">
+          <div className="flex items-center border-2 border-line rounded-lg overflow-hidden">
             <button
-              className="px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-green-600 transition disabled:opacity-50 cursor-pointer"
+              className="px-4 py-3 text-ink-muted hover:bg-sunk hover:text-success transition disabled:opacity-50 cursor-pointer"
               type="button"
               onClick={() => updateCount(count - 1)}
               disabled={loading || !inStock || count <= 1}
             >
               {loading ? (
-                <Spinner className="text-gray-500" />
+                <Spinner className="text-ink-muted" />
               ) : (
                 <svg className="h-3 w-3" role="img" viewBox="0 0 448 512" aria-hidden="true">
                   <path
@@ -174,13 +140,13 @@ export default function CartQuantity({ productId, max, price, discounted }: Cart
               readOnly
             />
             <button
-              className="px-4 py-3 text-gray-600 hover:bg-gray-100 hover:text-green-600 transition disabled:opacity-50 cursor-pointer"
+              className="px-4 py-3 text-ink-muted hover:bg-sunk hover:text-success transition disabled:opacity-50 cursor-pointer"
               type="button"
               onClick={() => updateCount(count + 1)}
               disabled={loading || !inStock || count >= maxCount}
             >
               {loading ? (
-                <Spinner className="text-gray-500" />
+                <Spinner className="text-ink-muted" />
               ) : (
                 <svg className="h-3 w-3" role="img" viewBox="0 0 448 512" aria-hidden="true">
                   <path
@@ -191,15 +157,15 @@ export default function CartQuantity({ productId, max, price, discounted }: Cart
               )}
             </button>
           </div>
-          <span className="text-sm text-gray-500">{max} available</span>
+          <span className="text-sm text-ink-muted">{max} available</span>
         </div>
-        {error && <p className="text-xs text-red-500 mt-2">{error}</p>}
+        {error && <p className="text-xs text-danger mt-2">{error}</p>}
       </div>
 
-      <div className="bg-gray-50 rounded-lg p-4 mb-6">
+      <div className="bg-sunk rounded-lg p-4 mb-6">
         <div className="flex justify-between items-center">
-          <span className="text-gray-600">Total Price:</span>
-          <span className="text-2xl font-bold text-green-600">{total} EGP</span>
+          <span className="text-ink-muted">Total Price:</span>
+          <span className="text-2xl font-bold text-success">{total} EGP</span>
         </div>
       </div>
     </>

@@ -1,48 +1,407 @@
 @import "tailwindcss";
 @import "@fortawesome/fontawesome-free/css/all.min.css";
 
+/* ==========================================================================
+   Cartiva — design tokens
+
+   Brand (locked, from docs/brand-guidelines.md):
+     Cartiva · Vault palette · Archivo · C-mark · Arrow Travel buttons
+   Layout system (from ui-ux-pro-max --design-system):
+     Bento Grids — modular cards, 24px radius, soft shadows, hover scale 1.02,
+     light ground. Where the engine contradicted the locked brand (it proposed
+     Playfair Display + Inter) the brand wins and Archivo stays.
+
+   Surfaces are LIGHT. Gold and near-black are ink and accent — never a
+   full-bleed section ground.
+   ========================================================================== */
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* --- ground ------------------------------------------------------- */
+  --page: #fafaf9;        /* the page, always */
+  --card: #ffffff;        /* every bento tile */
+  --sunk: #f5f5f7;        /* recessed wells: image beds, inputs */
+  --line: #ded9d2;
+  --line-soft: rgba(222, 217, 210, 0.6);
+
+  /* --- ink ---------------------------------------------------------- */
+  --ink: #0c0a09;
+  --ink-soft: #44403c;
+  --ink-muted: #6b6560;
+
+  /* --- the gold ramp ------------------------------------------------
+     Gold is NEVER one flat hex. A metal edge needs a shadow end, a body
+     and a highlight, or it reads as a coloured line instead of metal. */
+  --gold-deep: #5c3d06;
+  --gold: #9a6b12;        /* the only gold safe as solid text on paper — 4.68:1 */
+  --gold-mid: #c79a3c;
+  --gold-lit: #e8c878;
+  --gold-pale: #f6e7be;
+
+  /* --- brand ink (buttons and the mark only, never a section) -------- */
+  --vault: #1c1917;
+  --vault-deep: #0c0a09;
+
+  /* --- semantic ------------------------------------------------------ */
+  --success: #1f5f3f;
+  --warning: #b45309;
+  --danger: #8a2b18;
+
+  /* --- the canonical metal edge -------------------------------------- */
+  --metal: linear-gradient(
+    115deg,
+    var(--gold-deep) 0%, var(--gold) 22%, var(--gold-lit) 42%,
+    var(--gold-pale) 50%, var(--gold-lit) 58%, var(--gold) 78%, var(--gold-deep) 100%
+  );
+  --metal-light: linear-gradient(
+    115deg,
+    var(--gold-deep) 0%, var(--gold) 25%, var(--gold-mid) 45%,
+    var(--gold) 65%, var(--gold-deep) 100%
+  );
+
+  /* --- bento system -------------------------------------------------- */
+  --radius: 24px;
+  --radius-sm: 16px;
+  --gap: 20px;
+  --shadow: 0 4px 6px rgba(12, 10, 9, 0.05);
+  --shadow-lift: 0 10px 20px -6px rgba(12, 10, 9, 0.1), 0 24px 48px -24px rgba(12, 10, 9, 0.12);
+  --hover-scale: 1.02;
+
+  --ease: cubic-bezier(0.22, 1, 0.36, 1);
+  /* GSAP power2.out, which the engine specifies for Standard-tier hover.
+     Distinct from --ease (expo) used for slower, authored motion. */
+  --ease-hover: cubic-bezier(0.22, 0.61, 0.36, 1);
+
+  --background: var(--page);
+  --foreground: var(--ink);
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-primary-100: #f0fdf4;
-  --color-primary-400: #48dc7e;
-  --color-primary-500: #2ac964;
-  --color-primary-600: #16a34a;
-  --color-primary-700: #15803D;
-}
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
+  --font-sans: var(--font-archivo);
+  --font-display: var(--font-archivo);
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-  overflow-x: hidden;
-  /* overflow-y: visible; */
-  min-height: 100vh;
+  --color-page: var(--page);
+  --color-card: var(--card);
+  --color-sunk: var(--sunk);
+  --color-line: var(--line);
+
+  --color-ink: var(--ink);
+  --color-ink-soft: var(--ink-soft);
+  --color-ink-muted: var(--ink-muted);
+
+  --color-gold-deep: var(--gold-deep);
+  --color-gold: var(--gold);
+  --color-gold-mid: var(--gold-mid);
+  --color-gold-lit: var(--gold-lit);
+  --color-gold-pale: var(--gold-pale);
+
+  --color-vault: var(--vault);
+  --color-vault-deep: var(--vault-deep);
+
+  --color-success: var(--success);
+  --color-warning: var(--warning);
+  --color-danger: var(--danger);
+
+  --radius-bento: var(--radius);
+  --shadow-soft: var(--shadow);
+  --shadow-lift: var(--shadow-lift);
+  --ease-vault: cubic-bezier(0.22, 1, 0.36, 1);
+
+  /* The deprecated pre-Cartiva compatibility layer that used to live here
+     (primary-*, accent-*, card-*, paper-*, cream-*) has been removed: every
+     consumer is migrated. An empty block was the completion test, and it
+     passed — nothing in src/ references those names any more. */
 }
 
 html {
-  /* overflow-x: hidden;
-  overflow-y: auto; */
   height: 100%;
+  /* Engine UX rule, Smooth Scroll (HIGH): anchor jumps should ease, not
+     teleport. The reduced-motion block below overrides this back to auto. */
+  scroll-behavior: smooth;
+}
+
+/* Engine UX rule, Skip Links: nav-heavy pages need a way past the header.
+   Visually hidden until focused, then it lands as a real control. */
+.skip-link {
+  position: fixed;
+  top: 12px;
+  left: 12px;
+  z-index: 100;
+  transform: translateY(-160%);
+  transition: transform 0.28s var(--ease-hover);
+  background: var(--vault);
+  color: #fff;
+  border-radius: 999px;
+  padding: 14px 24px;
+  box-shadow: var(--shadow-lift);
+}
+/* :focus, not :focus-visible — this control sits first in the tab order
+   and is only ever reached by keyboard, so it should appear for any focus
+   rather than depending on the browser's heuristic. */
+.skip-link:focus {
+  transform: translateY(0);
+}
+
+body {
+  background: var(--page);
+  color: var(--ink);
+  font-family: var(--font-archivo), system-ui, sans-serif;
+  overflow-x: hidden;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 
 button,
 a {
   cursor: pointer;
+}
+
+/* Display type runs expanded; body runs normal width. The contrast comes
+   from width, not from a second typeface. */
+.font-display {
+  font-variation-settings: "wdth" 110;
+  font-weight: 600;
+  letter-spacing: -0.015em;
+}
+
+.font-display-lg {
+  font-variation-settings: "wdth" 116;
+  font-weight: 600;
+  letter-spacing: -0.025em;
+  line-height: 1.03;
+  text-wrap: balance;
+}
+
+.label {
+  font-size: 10px;
+  letter-spacing: 0.28em;
+  text-transform: uppercase;
+  font-weight: 500;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+.gold-text {
+  background: linear-gradient(100deg, var(--gold-deep), var(--gold) 40%, var(--gold-mid) 58%, var(--gold-deep));
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* ==========================================================================
+   BENTO — every tile in the system.
+   Modular card, 24px radius, soft shadow that expands on hover, scale 1.02.
+   ========================================================================== */
+.bento {
+  background: var(--card);
+  border: 1px solid var(--line-soft);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+  /* Engine spec, Hover Micro-interaction (Standard tier): 200-300ms.
+     This was 550ms — outside the engine's range AND outside the brand's
+     own 250-500ms micro-interaction band. 280ms sits inside both. */
+  transition: transform 0.28s var(--ease-hover), box-shadow 0.28s var(--ease-hover),
+    border-color 0.28s var(--ease-hover);
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .bento-hover:hover,
+  .bento-hover:focus-within {
+    /* Engine spec: y:-4 AND scale:1.02 — the lift was missing. */
+    transform: translateY(-4px) scale(var(--hover-scale));
+    box-shadow: var(--shadow-lift);
+    border-color: rgba(154, 107, 18, 0.28);
+    z-index: 2;
+  }
+  /* "Always attach the reverse tween" — in CSS the transition already
+     reverses, but the press state must not stick either. */
+  .bento-hover:active {
+    transform: translateY(-1px) scale(0.998);
+    transition-duration: 0.12s;
+  }
+}
+
+/* Image wells sit recessed inside a tile, never edge-to-edge on the page. */
+.well {
+  background: var(--sunk);
+  border-radius: var(--radius-sm);
+  overflow: hidden;
+}
+
+/* ==========================================================================
+   ARROW TRAVEL — the locked primary action.
+   The gold ramp is painted at 220% width and its POSITION is animated,
+   because CSS cannot transition a background-image.
+   ========================================================================== */
+.btn-sweep:not(:disabled):not([data-variant="tertiary"]):hover {
+  background-position: 0 0, 100% 0;
+}
+.btn-sweep[data-variant="primary"]:not(:disabled):hover {
+  color: #fff;
+}
+.btn-sweep[data-variant="secondary"]:not(:disabled):hover {
+  color: var(--ink);
+  border-color: var(--gold);
+}
+.btn-sweep[data-variant="tertiary"]::after,
+.btn-sweep[data-variant="tertiary"]::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 1px;
+  width: 100%;
+}
+.btn-sweep[data-variant="tertiary"]::after {
+  background: linear-gradient(90deg, var(--gold-deep), var(--gold-mid), var(--gold-deep));
+  opacity: 0.4;
+}
+.btn-sweep[data-variant="tertiary"]::before {
+  background: var(--gold);
+  transform: scaleX(0);
+  transform-origin: left;
+  transition: transform 0.6s var(--ease);
+  z-index: 1;
+}
+.btn-sweep[data-variant="tertiary"]:not(:disabled):hover::before {
+  transform: scaleX(1);
+}
+
+/* ==========================================================================
+   SCROLL REVEAL — engine spec: y 24, stagger 0.08, ~500ms, power2-style out.
+   No overshoot; the engine's own anti-patterns list "fast animations".
+   ========================================================================== */
+/* Entrance uses the independent `translate` property, NOT `transform`.
+   Many tiles carry .reveal and .bento together; if both animated
+   `transform`, the reveal's 500ms rule would override the hover's 280ms
+   one (higher specificity, same property) and every hover on those tiles
+   would silently run at the wrong speed. Splitting the properties lets
+   entrance and hover coexist. */
+.reveal {
+  opacity: 0;
+  translate: 0 24px;
+}
+.reveal.is-in {
+  opacity: 1;
+  translate: 0 0;
+  transition: opacity 0.5s var(--ease), translate 0.5s var(--ease);
+}
+
+/* A tile that is BOTH must declare every transition in one place: the
+   `transition` shorthand replaces rather than merges, so .reveal.is-in
+   alone would erase the hover transitions inherited from .bento and the
+   hover would snap instead of easing. */
+.bento.reveal.is-in {
+  transition: opacity 0.5s var(--ease), translate 0.5s var(--ease),
+    transform 0.28s var(--ease-hover), box-shadow 0.28s var(--ease-hover),
+    border-color 0.28s var(--ease-hover);
+}
+
+/* ==========================================================================
+   TOASTS — a bento tile with a status rule down its left edge.
+   Sonner's own rich colours are off: full red/green fills fight the Vault
+   palette. Colour is carried by the rule and the icon, and never alone —
+   every toast also has its icon, per the engine's colour-not-only rule.
+   ========================================================================== */
+.toast-bento {
+  position: relative;
+  overflow: hidden;
+}
+.toast-bento::before {
+  content: "";
+  position: absolute;
+  inset-block: 0;
+  left: 0;
+  width: 3px;
+  background: var(--gold);
+}
+.toast-bento.toast-success::before {
+  background: var(--success);
+}
+.toast-bento.toast-error::before {
+  background: var(--danger);
+}
+.toast-bento.toast-warning::before {
+  background: var(--warning);
+}
+.toast-bento.toast-info::before {
+  background: var(--gold);
+}
+
+/* ==========================================================================
+   QUANTITY STEPPER
+   The count rolls in the direction you pushed it, so the change is felt
+   rather than just read. Press uses scale (engine: "add pressed/active
+   state") and stays under the 2px displacement the engine sets for
+   feedback-not-motion. The field is a real number input, so the value can
+   be typed instead of clicked 12 times.
+   ========================================================================== */
+.qty-group {
+  border: 1px solid transparent;
+  background-image: linear-gradient(var(--card), var(--card)), linear-gradient(var(--line), var(--line));
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  transition: background-image 0.32s var(--ease-hover), box-shadow 0.32s var(--ease-hover);
+}
+/* On focus the edge becomes the brand's metal ramp — the same material
+   language as Arrow Travel, at the moment the control is being used. */
+.qty-group:focus-within {
+  background-image: linear-gradient(var(--card), var(--card)), var(--metal-light);
+  box-shadow: var(--shadow);
+}
+
+.qty-btn {
+  transition: background-color 0.2s var(--ease-hover), transform 0.12s var(--ease-hover),
+    color 0.2s var(--ease-hover);
+}
+.qty-btn:active:not(:disabled) {
+  transform: scale(0.88);
+}
+
+.qty-roll {
+  display: inline-block;
+  will-change: transform, opacity;
+}
+.qty-roll[data-dir="up"] {
+  animation: qty-up 0.26s var(--ease-hover);
+}
+.qty-roll[data-dir="down"] {
+  animation: qty-down 0.26s var(--ease-hover);
+}
+@keyframes qty-up {
+  from {
+    transform: translateY(70%);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes qty-down {
+  from {
+    transform: translateY(-70%);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+
+/* Strip the native spinners — the +/- controls are the affordance. */
+.qty-input::-webkit-outer-spin-button,
+.qty-input::-webkit-inner-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+.qty-input {
+  -moz-appearance: textfield;
+  appearance: textfield;
 }
 
 /* Font Awesome inline SVG sizing without importing the full CSS */
@@ -53,11 +412,40 @@ a {
   vertical-align: -0.125em;
 }
 
-input:focus,
-input:focus-visible,
-textarea:focus,
-textarea:focus-visible,
-select:focus,
-select:focus-visible {
+/* Focus: suppressed only for pointer interaction, never for keyboard. */
+input:focus:not(:focus-visible),
+textarea:focus:not(:focus-visible),
+select:focus:not(:focus-visible) {
   outline: none;
+}
+
+:focus-visible {
+  outline: 2px solid var(--gold);
+  outline-offset: 3px;
+  border-radius: 4px;
+}
+
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline-color: var(--gold) !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  /* Must clear `translate`, which is what the entrance now offsets —
+     resetting `transform` alone would leave this content sitting 24px
+     low for anyone who asked for reduced motion. */
+  .reveal {
+    opacity: 1;
+    translate: none;
+    transform: none;
+  }
 }

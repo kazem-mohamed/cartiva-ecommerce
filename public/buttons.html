@@ -1,0 +1,218 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Cartiva Button Layouts</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:ital,wdth,wght@0,62..125,100..900;1,62..125,100..900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --void:#08070A; --deep:#0F0D10; --panel:#161318; --hair:#2A252C;
+  --paper:#FAFAF9; --paper-ink:#0C0A09; --paper-muted:#6B6560;
+  --g-deep:#5C3D06; --g-base:#9A6B12; --g-mid:#C79A3C; --g-lit:#E8C878; --g-pale:#F6E7BE;
+  --txt:#F2ECE1; --txt-dim:#9A9088;
+  --ease:cubic-bezier(.22,1,.36,1);
+  --slow:.75s;
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--void);color:var(--txt);
+  font-family:'Archivo',system-ui,sans-serif;font-size:16px;line-height:1.6;-webkit-font-smoothing:antialiased}
+.wrap{max-width:1180px;margin:0 auto;padding:0 30px}
+.disp{font-variation-settings:"wdth" 116;font-weight:600;letter-spacing:-.02em;line-height:1.05;text-wrap:balance}
+.lab{font-size:10px;letter-spacing:.28em;text-transform:uppercase;color:var(--txt-dim);font-weight:500}
+.gold-text{background:linear-gradient(100deg,var(--g-base),var(--g-lit) 45%,var(--g-pale) 52%,var(--g-mid));
+  -webkit-background-clip:text;background-clip:text;color:transparent}
+h1,h2,h4{margin:0}
+:focus-visible{outline:1px solid var(--g-lit);outline-offset:4px}
+header{padding:72px 0 52px;border-bottom:1px solid var(--hair)}
+header h1{font-size:clamp(36px,5.6vw,62px)}
+header p{max-width:64ch;color:var(--txt-dim);font-size:16.5px;margin:22px 0 0;font-weight:300}
+section{padding:60px 0;border-bottom:1px solid var(--hair)}
+.sechead{display:flex;align-items:baseline;justify-content:space-between;gap:18px;flex-wrap:wrap;margin-bottom:12px}
+.sechead h2{font-size:clamp(22px,2.9vw,30px)}
+.note{max-width:68ch;color:var(--txt-dim);margin:0 0 40px;font-weight:300}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(380px,1fr));gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.cell{background:var(--deep);padding:32px 30px;display:flex;flex-direction:column;gap:20px}
+.cell.light{background:var(--paper);color:var(--paper-ink)}
+.cell.light .why,.cell.light .idx{color:var(--paper-muted)}
+.hd{display:flex;align-items:baseline;justify-content:space-between;gap:10px}
+.hd h4{font-variation-settings:"wdth" 110;font-weight:600;font-size:15px;letter-spacing:.02em}
+.idx{font-size:10px;color:var(--txt-dim);font-variant-numeric:tabular-nums;letter-spacing:.1em}
+.why{font-size:13.2px;color:var(--txt-dim);margin:0;font-weight:300;line-height:1.66}
+.stage{padding-top:6px}
+
+/* ===== SHARED METAL SKIN — the gradient SWEEPS, it does not snap =====
+   background-image cannot be transitioned in CSS, so the gold is drawn at
+   220% width and its POSITION is animated. That is what makes it smooth. */
+.b{
+  font-family:inherit;font-size:11px;font-weight:400;letter-spacing:.24em;text-transform:uppercase;
+  cursor:pointer;position:relative;border:1px solid transparent;border-radius:1px;color:var(--g-pale);
+  background-image:
+    linear-gradient(var(--deep),var(--deep)),
+    linear-gradient(115deg,var(--g-deep) 0%,var(--g-base) 22%,var(--g-lit) 42%,var(--g-pale) 50%,var(--g-lit) 58%,var(--g-base) 78%,var(--g-deep) 100%);
+  background-origin:border-box;background-clip:padding-box,border-box;
+  background-size:100% 100%, 220% 100%;
+  background-position:0 0, 0% 0;
+  transition:background-position var(--slow) var(--ease), color .5s var(--ease);
+  width:100%;
+}
+.b:not(:disabled):hover{background-position:0 0, 100% 0;color:#fff}
+.b:disabled{opacity:.28;cursor:not-allowed}
+.b svg{width:14px;height:14px;flex:0 0 auto}
+.b.light{
+  background-image:
+    linear-gradient(var(--paper),var(--paper)),
+    linear-gradient(115deg,var(--g-deep) 0%,var(--g-base) 25%,var(--g-mid) 45%,var(--g-base) 65%,var(--g-deep) 100%);
+  color:var(--g-deep);
+}
+.b.light:not(:disabled):hover{color:var(--paper-ink)}
+
+.l-just{display:flex;align-items:center;justify-content:space-between;height:60px;padding:0 26px 0 30px}
+
+.l-stack{display:flex;align-items:center;justify-content:space-between;gap:20px;min-height:70px;padding:14px 26px 14px 30px;text-align:left}
+.l-stack .col{display:flex;flex-direction:column;gap:4px;align-items:flex-start}
+.l-stack .sub{font-size:9.5px;letter-spacing:.16em;color:var(--g-mid);opacity:.85;text-transform:uppercase}
+
+.l-split{display:flex;align-items:stretch;height:60px;padding:0;overflow:hidden}
+.l-split .main{flex:1;display:flex;align-items:center;padding:0 28px}
+.l-split .side{width:60px;display:flex;align-items:center;justify-content:center;border-left:1px solid rgba(232,200,120,.22)}
+.l-split .side svg{transition:transform .55s var(--ease)}
+.l-split:not(:disabled):hover .side svg{transform:translateX(4px)}
+
+.l-price{display:flex;align-items:stretch;height:60px;padding:0;overflow:hidden}
+.l-price .main{flex:1;display:flex;align-items:center;padding:0 28px}
+.l-price .amt{display:flex;align-items:center;padding:0 24px;border-left:1px solid rgba(232,200,120,.22);
+  font-variant-numeric:tabular-nums;letter-spacing:.06em;font-weight:500;font-size:12.5px}
+
+.l-lead{display:flex;align-items:center;gap:16px;height:60px;padding:0 30px;justify-content:flex-start}
+.l-lead .ic{display:grid;place-items:center;width:26px;height:26px;border:1px solid rgba(232,200,120,.3);border-radius:50%}
+
+.l-wide{display:flex;align-items:center;justify-content:center;height:76px;padding:0 64px;letter-spacing:.42em;font-size:10px}
+
+.l-travel{display:flex;align-items:center;justify-content:center;height:60px;padding:0 30px}
+.l-travel .t{transition:transform .55s var(--ease);display:inline-block}
+.l-travel .ar{position:absolute;right:26px;opacity:0;transform:translateX(-10px);transition:opacity .5s var(--ease),transform .55s var(--ease)}
+.l-travel:not(:disabled):hover .t{transform:translateX(-13px)}
+.l-travel:not(:disabled):hover .ar{opacity:1;transform:translateX(0)}
+
+.l-bar{display:flex;align-items:center;justify-content:space-between;height:64px;padding:0 30px}
+.l-bar .qty{display:flex;align-items:center;gap:14px;font-variant-numeric:tabular-nums;font-size:12px;letter-spacing:.1em}
+.l-bar .qty i{width:1px;height:18px;background:rgba(232,200,120,.25);display:block}
+
+.b.loading{pointer-events:none}
+.b.loading .t,.b.loading .col{opacity:.22}
+.sp{width:14px;height:14px;border:1px solid currentColor;border-right-color:transparent;border-radius:50%;
+  animation:sp .9s linear infinite;position:absolute;left:50%;top:50%;margin:-7px 0 0 -7px}
+@keyframes sp{to{transform:rotate(360deg)}}
+footer{padding:40px 0 96px;color:var(--txt-dim);font-size:12.5px;font-weight:300}
+@media (prefers-reduced-motion:reduce){*{transition-duration:.01ms!important;animation:none!important}}
+</style>
+</head>
+<body>
+<header>
+  <div class="wrap">
+    <span class="lab">Layout study · metal skin unchanged</span>
+    <h1 class="disp" style="margin-top:16px">Eight <span class="gold-text">layouts.</span><br>One skin.</h1>
+    <p>Same metal, same type, same gold ramp — only the composition inside the box changes. The gradient now sweeps rather than snaps: it is drawn at 220% width and its position is animated over 750ms, because CSS cannot transition a background-image itself. Hover slowly and watch the light travel across.</p>
+  </div>
+</header>
+
+<section>
+  <div class="wrap">
+    <div class="sechead"><h2 class="disp">Layouts</h2><span class="lab">Click any to load</span></div>
+    <p class="note">The question here is where the content sits inside the box — not what colour the box is.</p>
+    <div class="grid">
+
+      <div class="cell">
+        <div class="hd"><h4>Justified</h4><span class="idx">01</span></div>
+        <p class="why">Label flush left, mark flush right, air between them. The box stops being a container around a word and becomes a bar with two ends.</p>
+        <div class="stage"><button class="b l-just" data-load><span class="t">Add to cart</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+      <div class="cell">
+        <div class="hd"><h4>Stacked</h4><span class="idx">02</span></div>
+        <p class="why">A second line carries the thing the shopper actually wants to know. Two levels of information inside one control — the most retail of the set.</p>
+        <div class="stage"><button class="b l-stack" data-load>
+          <span class="col"><span class="t">Add to cart</span><span class="sub">Free delivery · Tue 12 Aug</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+      <div class="cell">
+        <div class="hd"><h4>Split cell</h4><span class="idx">03</span></div>
+        <p class="why">A hairline divides the action from its mark. Reads like a stamped plate with two fields — and echoes the tag logic in the wordmark.</p>
+        <div class="stage"><button class="b l-split" data-load>
+          <span class="main"><span class="t">Add to cart</span></span>
+          <span class="side"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></div>
+      </div>
+
+      <div class="cell">
+        <div class="hd"><h4>Price cell</h4><span class="idx">04</span></div>
+        <p class="why">The amount lives inside the button, in tabular figures. One glance answers both what this does and what it costs — strong on a product page, wrong in a grid.</p>
+        <div class="stage"><button class="b l-price" data-load>
+          <span class="main"><span class="t">Add to cart</span></span>
+          <span class="amt">3,064</span></button></div>
+      </div>
+
+      <div class="cell">
+        <div class="hd"><h4>Icon lead</h4><span class="idx">05</span></div>
+        <p class="why">A ringed mark opens the line, label follows, everything left-aligned. Calmer than centred — it reads as a row, not a stamp.</p>
+        <div class="stage"><button class="b l-lead" data-load>
+          <span class="ic"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M12 5v14M5 12h14"/></svg></span>
+          <span class="t">Add to cart</span></button></div>
+      </div>
+
+      <div class="cell">
+        <div class="hd"><h4>Wide minimal</h4><span class="idx">06</span></div>
+        <p class="why">76px tall, 64px of padding either side, a 10px label at .42em tracking. Almost all of it is empty space — the most restrained, and the most expensive-feeling if the page around it is quiet enough to carry it.</p>
+        <div class="stage"><button class="b l-wide" data-load><span class="t">Add to cart</span></button></div>
+      </div>
+
+      <div class="cell">
+        <div class="hd"><h4>Arrow travel</h4><span class="idx">07</span></div>
+        <p class="why">At rest it is a centred label with nothing else. On hover the text steps left and a mark arrives in the space it left. The composition changes on interaction rather than the colour.</p>
+        <div class="stage"><button class="b l-travel" data-load><span class="t">Add to cart</span>
+          <span class="ar"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span></button></div>
+      </div>
+
+      <div class="cell">
+        <div class="hd"><h4>Bar</h4><span class="idx">08</span></div>
+        <p class="why">Full-width with a quantity field held on the right behind a hairline. This is the sticky mobile checkout bar — one control doing two jobs.</p>
+        <div class="stage"><button class="b l-bar" data-load><span class="t">Add to cart</span>
+          <span class="qty"><span>QTY</span><i></i><span>01</span></span></button></div>
+      </div>
+
+      <div class="cell light">
+        <div class="hd"><h4>Justified · light</h4><span class="idx">01L</span></div>
+        <p class="why">The same layout and the same sweep on a white section, using the deep end of the ramp so it holds contrast against paper.</p>
+        <div class="stage"><button class="b light l-just" data-load><span class="t">Add to cart</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+      <div class="cell light">
+        <div class="hd"><h4>Stacked · light</h4><span class="idx">02L</span></div>
+        <p class="why">Two-level layout on paper. The sub-line drops to the base gold so it stays subordinate without losing legibility.</p>
+        <div class="stage"><button class="b light l-stack" data-load>
+          <span class="col"><span class="t">Add to cart</span><span class="sub" style="color:var(--g-base)">Free delivery · Tue 12 Aug</span></span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button></div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<footer><div class="wrap">Gradient sweeps via background-position at 220% width · 750ms expo · heights 60–76px · every control keyboard-reachable</div></footer>
+<script>
+document.querySelectorAll('.b[data-load]').forEach(function(b){
+  b.addEventListener('click',function(){
+    if(b.classList.contains('loading'))return;
+    var s=document.createElement('span');s.className='sp';
+    b.classList.add('loading');b.appendChild(s);
+    setTimeout(function(){b.classList.remove('loading');s.remove();},1500);
+  });
+});
+</script>
+</body>
+</html>

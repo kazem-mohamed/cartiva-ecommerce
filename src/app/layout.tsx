@@ -1,26 +1,32 @@
 import type { Metadata } from "next";
-import { Exo } from "next/font/google";
+import { Archivo } from "next/font/google";
 import { Suspense } from "react";
 import { Toaster } from "@/component/ui/sonner";
 import { Providers } from "@/app/providers";
 import Navbar from "@/component/layout/Navbar/Navbar";
 import Footer from "@/component/layout/Footer/Footer";
 import RouteLoader from "@/component/layout/RouteLoader";
+import CompareBar from "@/component/compare/CompareBar";
 import "./globals.css";
 
-const exo = Exo({
-  variable: "--font-exo",
+// One family, two widths. Display runs expanded (wdth 110-116), body runs
+// normal — the contrast comes from width rather than a second typeface.
+const archivo = Archivo({
+  variable: "--font-archivo",
   subsets: ["latin"],
+  axes: ["wdth"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "FreshCart",
-    template: "%s | FreshCart",
+    default: "Cartiva",
+    template: "%s | Cartiva",
   },
-  description: "FreshCart online store",
+  description:
+    "Cartiva — electronics, fashion, beauty, home, books and mobiles. Everything has a price tag.",
   icons: {
-    icon: "/favicon.jpg",
+    icon: "/favicon.ico",
   },
 };
 
@@ -30,15 +36,20 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${exo.variable} h-full antialiased`}>
+    <html lang="en" className={`${archivo.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
         <Providers>
           <Suspense fallback={null}>
             <RouteLoader />
           </Suspense>
           <Navbar />
-          {children}
+          {/* Target for the skip link. tabIndex -1 lets it receive focus
+             programmatically without entering the tab order itself. */}
+          <div id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
+            {children}
+          </div>
           <Footer />
+          <CompareBar />
         </Providers>
         <Toaster />
       </body>
