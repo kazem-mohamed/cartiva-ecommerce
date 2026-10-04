@@ -15,7 +15,7 @@ async function withJsonResponse(res: Response) {
 
 export async function PUT(request: Request) {
   const session = await getServerSession(authOptions)
-  const token = (session as any)?.accessToken
+  const token = session?.accessToken
 
   if (!token) {
     return NextResponse.json({ message: 'Unauthorized' }, { status: 401 })

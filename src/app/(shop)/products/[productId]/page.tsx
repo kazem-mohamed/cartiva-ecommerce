@@ -1,292 +1,142 @@
-import Link from "next/link";
 import type { Metadata } from "next";
-import WishlistButton from "@/component/wishlist/WishlistButton";
-import ProductImageGallery from "./ProductImageGallery";
-import ProductPurchase from "./ProductPurchase";
-import ShareButton from "./ShareButton";
-import SimilarProductsCarousel from "./SimilarProductsCarousel";
-import ProductReviews, { type Review } from "@/component/product/ProductReviews";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import { Gallery } from "@/ds/commerce/Gallery";
+import { ProductCard } from "@/ds/commerce/ProductCard";
+import { Reviews } from "@/ds/commerce/Reviews";
+import { siblingsOf } from "@/ds/commerce/Swatches";
+import type { Product } from "@/ds/commerce/types";
+import { getProduct, getProducts, getReviews } from "@/ds/data/catalog";
+import { Reveal } from "@/ds/motion/Reveal";
+import { PageFrame } from "@/ds/ui/PageIntro";
+import { BuyBox } from "./BuyBox";
 
-interface Ref {
-  _id: string;
-  name: string;
-  slug?: string;
-}
+type Params = Promise<{ productId: string }>;
 
-interface Product {
-  _id: string;
-  title: string;
-  description: string;
-  price: number;
-  priceAfterDiscount?: number;
-  quantity: number;
-  ratingsAverage?: number;
-  ratingsQuantity?: number;
-  imageCover: string;
-  images: string[];
-  category?: Ref;
-  subcategory?: Ref;
-  brand?: Ref;
-  sold?: number;
-}
-
-const API = "https://ecommerce.routemisr.com/api/v1/products";
-const egp = new Intl.NumberFormat("en-EG");
-
-async function getProduct(productId: string): Promise<Product | null> {
-  try {
-    const res = await fetch(`${API}/${productId}`, { next: { revalidate: 120 } });
-    if (!res.ok) return null;
-    const json = (await res.json()) as { data: Product };
-    return json.data ?? null;
-  } catch {
-    return null;
-  }
-}
-
-async function getSimilar(product: Product): Promise<Product[]> {
-  try {
-    const categoryId = product.category?._id;
-    if (!categoryId) return [];
-    const res = await fetch(`${API}?category[in]=${categoryId}&limit=12`, {
-      next: { revalidate: 300 },
-    });
-    if (!res.ok) return [];
-    const json = (await res.json()) as { data: Product[] };
-    return (json.data ?? []).filter((p) => p._id !== product._id).slice(0, 8);
-  } catch {
-    return [];
-  }
-}
-
-/** Real reviews from the API — 37 on some products, with names and dates. */
-async function getReviews(productId: string): Promise<Review[]> {
-  try {
-    const res = await fetch(`${API}/${productId}/reviews`, { next: { revalidate: 60 } });
-    if (!res.ok) return [];
-    const json = (await res.json()) as { data: Review[] };
-    return json.data ?? [];
-  } catch {
-    return [];
-  }
-}
-
-export async function generateMetadata(props: {
-  params: Promise<{ productId: string }>;
-}): Promise<Metadata> {
-  const { productId } = await props.params;
+export async function generateMetadata({ params }: { params: Params }): Promise<Metadata> {
+  const { productId } = await params;
   const product = await getProduct(productId);
   if (!product) return { title: "Product not found" };
-  return {
-    title: product.title,
-    description: product.description?.slice(0, 160),
-  };
+  return { title: product.title, description: product.description?.slice(0, 160) };
 }
 
-export default async function ProductDetails(props: {
-  params: Promise<{ productId: string }>;
-}) {
-  // Next 16: params is async-only.
-  const { productId } = await props.params;
-  const product = await getProduct(productId);
+/** The API sends many descriptions as tab-separated "key<TAB>value" lines — a spec sheet in disguise. */
+function readDescription(text = "") {
+  const lines = text
+    .split("\n")
+    .map((l) => l.trim())
+    .filter(Boolean);
+  const specs = lines.map((l) => l.split("\t")).filter((p): p is [string, string] => p.length === 2 && !!p[0] && !!p[1]);
+  return specs.length >= 2 ? { specs, prose: "" } : { specs: [] as [string, string][], prose: text.trim() };
+}
 
-  if (!product) {
-    return (
-      <main className="mx-auto w-full max-w-[1320px] px-5 sm:px-8 py-24">
-        <div className="bento px-8 py-20 text-center">
-          <h1 className="font-display text-2xl">Product not found</h1>
-          <p className="mt-3 text-sm font-light text-ink-muted">
-            It may have sold out, or the link is no longer valid.
-          </p>
-          <Link
-            href="/products"
-            className="label mt-7 inline-block text-gold transition-colors duration-300 hover:text-gold-deep"
-          >
-            Back to the catalogue
-          </Link>
-        </div>
-      </main>
-    );
-  }
+/** Same department, one per title (the catalogue repeats items per colour), best sellers first. */
+function similarTo(product: Product, all: Product[]) {
+  const seen = new Set([product.title.trim().toLowerCase()]);
+  return all
+    .filter((p) => p.category?._id === product.category?._id)
+    .sort((a, b) => (b.sold ?? 0) - (a.sold ?? 0))
+    .filter((p) => {
+      const key = p.title.trim().toLowerCase();
+      if (seen.has(key)) return false;
+      seen.add(key);
+      return true;
+    })
+    .slice(0, 4);
+}
 
-  const discounted =
-    typeof product.priceAfterDiscount === "number" &&
-    product.priceAfterDiscount < product.price;
-  const shown = discounted ? product.priceAfterDiscount! : product.price;
-  const off = discounted
-    ? Math.round((1 - product.priceAfterDiscount! / product.price) * 100)
-    : 0;
-  const soldOut = product.quantity === 0;
-  const low = !soldOut && product.quantity <= 5;
+export default async function ProductPage({ params }: { params: Params }) {
+  const { productId } = await params;
+  const [product, all, reviews] = await Promise.all([getProduct(productId), getProducts(), getReviews(productId)]);
+  if (!product) notFound();
 
-  const [similar, reviews] = await Promise.all([
-    getSimilar(product),
-    getReviews(product._id),
-  ]);
-
-  // The API returns descriptions as tab-separated spec pairs for many items.
-  const specLines =
-    product.description
-      ?.split("\n")
-      .map((l) => l.trim())
-      .filter(Boolean)
-      .map((l) => l.split("\t"))
-      .filter((parts) => parts.length === 2) ?? [];
-  const prose = specLines.length === 0 ? product.description?.trim() ?? "" : "";
+  const images = [product.imageCover, ...(product.images ?? [])].filter((src, i, list) => src && list.indexOf(src) === i);
+  const siblings = siblingsOf(product, all);
+  const similar = similarTo(product, all);
+  const { specs, prose } = readDescription(product.description);
 
   return (
-    <main>
-      {/* ── Chapter 1 · The object ──────────────────────────────────────
-          The gallery is pinned while the buying column scrolls past it.
-          Engine pattern: "sticky section header push", density 2/10. */}
-      <div className="mx-auto w-full max-w-[1320px] px-5 sm:px-8 pt-8">
-        <nav aria-label="Breadcrumb">
-          <ol className="label flex flex-wrap items-center gap-2 text-ink-muted">
-            <li><Link href="/" className="transition-colors duration-300 hover:text-gold">Home</Link></li>
-            <li aria-hidden="true">/</li>
-            <li><Link href="/products" className="transition-colors duration-300 hover:text-gold">Products</Link></li>
-            {product.category && (
-              <>
-                <li aria-hidden="true">/</li>
-                <li>
-                  <Link
-                    href={`/categories/${product.category._id}`}
-                    className="transition-colors duration-300 hover:text-gold"
-                  >
-                    {product.category.name}
-                  </Link>
-                </li>
-              </>
-            )}
-          </ol>
-        </nav>
+    <PageFrame>
+      <nav aria-label="Breadcrumb" className="pt-8 pb-6 lg:pt-10">
+        <ol className="flex flex-wrap items-center gap-2 t-caption text-fg-3">
+          <li className="flex items-center gap-2">
+            <Link href="/" className="hover:text-fg">
+              Home
+            </Link>
+            <span aria-hidden>/</span>
+          </li>
+          <li className="flex items-center gap-2">
+            <Link href="/products" className="hover:text-fg">
+              Shop
+            </Link>
+            <span aria-hidden>/</span>
+          </li>
+          {product.category?._id && (
+            <li className="flex items-center gap-2">
+              <Link href={`/categories/${product.category._id}`} className="hover:text-fg">
+                {product.category.name}
+              </Link>
+            </li>
+          )}
+        </ol>
+      </nav>
+
+      <div className="grid grid-cols-1 gap-10 md:grid-cols-2 lg:grid-cols-[minmax(0,1.12fr)_minmax(0,1fr)] lg:gap-16">
+        <div className="md:sticky md:top-20 md:self-start lg:top-24">
+          <Gallery images={images} title={product.title} />
+        </div>
+        {/* Keyed so switching colour (a different product) starts from quantity 1. */}
+        <BuyBox key={product._id} product={product} siblings={siblings} reviewCount={reviews.length} />
       </div>
 
-      <div className="mx-auto w-full max-w-[1320px] px-5 sm:px-8 py-10 sm:py-16">
-        <div className="grid gap-8 lg:grid-cols-[minmax(0,48%)_minmax(0,1fr)] lg:gap-16 lg:items-start">
-          <ProductImageGallery
-            title={product.title}
-            imageCover={product.imageCover}
-            images={product.images}
-            hasDiscount={discounted}
-            savePercent={off}
-          />
+      {(specs.length > 0 || prose) && (
+        <section aria-labelledby="details" className="mt-24 grid grid-cols-1 gap-8 border-t border-line pt-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,2fr)] lg:gap-16">
+          <h2 id="details" className="t-h2">
+            Details
+          </h2>
+          {specs.length > 0 ? (
+            <dl className="grid">
+              {specs.map(([k, v], i) => (
+                <div key={`${k}-${i}`} className="grid grid-cols-[minmax(0,2fr)_minmax(0,3fr)] gap-6 border-b border-line py-4 first:pt-0">
+                  <dt className="t-body text-fg-3">{k}</dt>
+                  <dd className="t-body text-fg">{v}</dd>
+                </div>
+              ))}
+            </dl>
+          ) : (
+            <p className="max-w-[64ch] whitespace-pre-line t-body-lg text-fg-2">{prose}</p>
+          )}
+        </section>
+      )}
 
-          <div className="lg:py-4">
-            {product.brand && (
+      <div id="reviews" className="mt-24 scroll-mt-24 border-t border-line pt-12">
+        <Reviews productId={product._id} initial={reviews} ratingsAverage={product.ratingsAverage} ratingsQuantity={product.ratingsQuantity} />
+      </div>
+
+      {similar.length > 0 && (
+        <section aria-labelledby="similar" className="mt-24 border-t border-line pt-12">
+          <div className="mb-10 flex flex-wrap items-end justify-between gap-4">
+            <h2 id="similar" className="t-h2">
+              More in {product.category?.name ?? "this department"}
+            </h2>
+            {product.category?._id && (
               <Link
-                href={`/brand/${product.brand._id}`}
-                className="label text-gold transition-colors duration-300 hover:text-gold-deep"
+                href={`/categories/${product.category._id}`}
+                className="t-label underline decoration-line-strong underline-offset-[6px] hover:decoration-current"
               >
-                {product.brand.name}
+                See all
               </Link>
             )}
-
-            <h1 className="font-display-lg mt-5 text-[clamp(30px,4.4vw,52px)]">
-              {product.title}
-            </h1>
-
-            {typeof product.ratingsAverage === "number" && (
-              <a
-                href="#reviews"
-                className="mt-6 inline-flex items-center gap-3 text-[14px] font-light text-ink-muted transition-colors duration-300 hover:text-gold"
-              >
-                <span aria-hidden="true" className="text-gold">★</span>
-                <span className="tabular">{product.ratingsAverage.toFixed(1)}</span>
-                {reviews.length > 0 && (
-                  <span className="tabular underline decoration-line underline-offset-4">
-                    {reviews.length} review{reviews.length === 1 ? "" : "s"}
-                  </span>
-                )}
-                {typeof product.sold === "number" && product.sold > 0 && (
-                  <span className="tabular">· {egp.format(product.sold)} sold</span>
-                )}
-              </a>
-            )}
-
-            {/* Price — given real air, per density 2/10 */}
-            <div className="mt-10 flex items-baseline gap-4">
-              <span className="font-display tabular text-[clamp(34px,4.6vw,46px)] font-semibold leading-none">
-                {egp.format(shown)}
-              </span>
-              <span className="text-[15px] font-light text-ink-muted">EGP</span>
-              {discounted && (
-                <>
-                  <s className="tabular text-[17px] font-light text-ink-muted decoration-1">
-                    {egp.format(product.price)}
-                  </s>
-                  <span className="label rounded-full bg-gold px-3 py-1.5 text-[9px] text-white">
-                    −{off}%
-                  </span>
-                </>
-              )}
-            </div>
-
-            <p className="mt-5 flex items-center gap-2.5 text-[14px] font-light">
-              <span
-                aria-hidden="true"
-                className="inline-block h-1.5 w-1.5 rounded-full"
-                style={{
-                  background: soldOut ? "var(--danger)" : low ? "var(--warning)" : "var(--success)",
-                }}
-              />
-              {soldOut ? "Out of stock" : low ? `Only ${product.quantity} left` : "In stock"}
-            </p>
-
-            <div className="mt-10">
-              <ProductPurchase
-                productId={product._id}
-                stock={product.quantity}
-                soldOut={soldOut}
-                unitPrice={shown}
-              />
-            </div>
-
-            <div className="mt-5 flex items-center gap-3">
-              <WishlistButton productId={product._id} />
-              <ShareButton title={product.title} />
-            </div>
-
-            {/* Specs as an editorial table, not a card grid */}
-            {(specLines.length > 0 || prose) && (
-              <section className="mt-14">
-                <h2 className="label mb-7 text-ink-muted">Specification</h2>
-                {specLines.length > 0 ? (
-                  <dl className="border-t border-line">
-                    {specLines.map(([k, v], i) => (
-                      <div
-                        key={`${k}-${i}`}
-                        className="flex gap-6 border-b border-line-soft py-4"
-                      >
-                        <dt className="w-[42%] shrink-0 text-[13.5px] font-light text-ink-muted">
-                          {k}
-                        </dt>
-                        <dd className="text-[14.5px]">{v}</dd>
-                      </div>
-                    ))}
-                  </dl>
-                ) : (
-                  <p className="max-w-[64ch] text-[15.5px] font-light leading-[1.75] text-ink-soft whitespace-pre-line">
-                    {prose}
-                  </p>
-                )}
-              </section>
-            )}
           </div>
-        </div>
-      </div>
-
-      {/* ── Chapter 2 · What buyers said ─────────────────────────────── */}
-      <div id="reviews" className="scroll-mt-6">
-        <ProductReviews
-          productId={product._id}
-          reviews={reviews}
-          ratingsAverage={product.ratingsAverage}
-        />
-      </div>
-
-      {/* ── Chapter 3 · The horizontal track ─────────────────────────── */}
-      {similar.length > 0 && <SimilarProductsCarousel products={similar} />}
-    </main>
+          <ul className="grid grid-cols-2 gap-x-4 gap-y-12 lg:grid-cols-4 lg:gap-x-5">
+            {similar.map((p, i) => (
+              <Reveal as="li" key={p._id} delay={i * 70}>
+                <ProductCard product={p} />
+              </Reveal>
+            ))}
+          </ul>
+        </section>
+      )}
+    </PageFrame>
   );
 }

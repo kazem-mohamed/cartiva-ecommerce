@@ -1,33 +1,40 @@
-import type { Metadata } from "next";
-import { Archivo } from "next/font/google";
+import type { Metadata, Viewport } from "next";
+import { Figtree, Fraunces } from "next/font/google";
 import { Suspense } from "react";
-import { Toaster } from "@/component/ui/sonner";
+import { Toaster } from "@/ds/ui/Toaster";
 import { Providers } from "@/app/providers";
-import Navbar from "@/component/layout/Navbar/Navbar";
-import Footer from "@/component/layout/Footer/Footer";
-import RouteLoader from "@/component/layout/RouteLoader";
-import CompareBar from "@/component/compare/CompareBar";
+import { RouteProgress } from "@/ds/chrome/RouteProgress";
+import { SiteShell } from "@/ds/chrome/SiteShell";
+import { themeInitScript } from "@/ds/theme/theme";
 import "./globals.css";
 
-// One family, two widths. Display runs expanded (wdth 110-116), body runs
-// normal — the contrast comes from width rather than a second typeface.
-const archivo = Archivo({
-  variable: "--font-archivo",
+// Soft editorial: Fraunces (a soft, optical-size serif) for display and headings,
+// Figtree for reading text, UI and prices. Chosen on /lab (option D).
+const fraunces = Fraunces({
+  variable: "--font-fraunces",
   subsets: ["latin"],
-  axes: ["wdth"],
+  axes: ["SOFT", "opsz"],
+  display: "swap",
+});
+const figtree = Figtree({
+  variable: "--font-figtree",
+  subsets: ["latin"],
   display: "swap",
 });
 
 export const metadata: Metadata = {
   title: {
-    default: "Cartiva",
+    default: "Cartiva — Everything, well lit",
     template: "%s | Cartiva",
   },
-  description:
-    "Cartiva — electronics, fashion, beauty, home, books and mobiles. Everything has a price tag.",
-  icons: {
-    icon: "/favicon.ico",
-  },
+  description: "Electronics and fashion, presented with care. Pay by card or cash on delivery.",
+};
+
+export const viewport: Viewport = {
+  themeColor: [
+    { media: "(prefers-color-scheme: dark)", color: "#171721" },
+    { media: "(prefers-color-scheme: light)", color: "#ededf3" },
+  ],
 };
 
 export default function RootLayout({
@@ -36,20 +43,18 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className={`${archivo.variable} h-full antialiased`}>
+    // data-theme is set by themeInitScript before paint, so the server markup
+    // intentionally differs from the client here.
+    <html lang="en" className={`${fraunces.variable} ${figtree.variable} h-full antialiased`} suppressHydrationWarning>
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <Providers>
           <Suspense fallback={null}>
-            <RouteLoader />
+            <RouteProgress />
           </Suspense>
-          <Navbar />
-          {/* Target for the skip link. tabIndex -1 lets it receive focus
-             programmatically without entering the tab order itself. */}
-          <div id="main" tabIndex={-1} className="flex flex-1 flex-col outline-none">
-            {children}
-          </div>
-          <Footer />
-          <CompareBar />
+          <SiteShell>{children}</SiteShell>
         </Providers>
         <Toaster />
       </body>

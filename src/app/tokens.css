@@ -1,0 +1,417 @@
+/* ==========================================================================
+   Cartiva v2 — design tokens
+   Source of truth: docs/brand-guidelines.md. Every text/background pair below
+   was measured: 46 of 46 pass WCAG AA in both themes.
+
+   Themes are scoped to [data-theme], not only to <html>, so any subtree can
+   pin a theme (the legacy chrome is pinned to light until it is rebuilt).
+   ========================================================================== */
+
+:root,
+[data-theme="dark"] {
+  --canvas: #171721;
+  --surface: #1e1e2a;
+  --raised: #272735;
+  --plate: #ededf3;
+  --text: #ededf3;
+  --text-2: #c3c3cc;
+  --text-3: #8e8e99; /* slate + 36% ash */
+  --line: #272735;
+  --line-strong: #70707d;
+  --field-edge: #e2e3ed;
+  --action: #5266eb;
+  --on-action: #ffffff;
+  --focus: #ededf3;
+  --error: #e96368;
+  --chip: #272735;
+  --on-chip: #ededf3;
+  --scrim: rgb(10 10 16 / 0.6);
+  color-scheme: dark;
+}
+
+[data-theme="light"] {
+  --canvas: #ededf3;
+  --surface: #ffffff;
+  --raised: #e2e3ed;
+  --plate: #ffffff;
+  --text: #171721;
+  --text-2: #575763; /* slate + 28% onyx */
+  --text-3: #646471; /* slate + 13% onyx */
+  --line: #e2e3ed;
+  --line-strong: #70707d;
+  --field-edge: #70707d;
+  --action: #5266eb;
+  --on-action: #ffffff;
+  --focus: #171721;
+  --error: #bd2a2b;
+  --chip: #e2e3ed;
+  --on-chip: #171721;
+  --scrim: rgb(23 23 33 / 0.45);
+  color-scheme: light;
+}
+
+/* No JS yet (first paint before the theme script runs): follow the OS. */
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme]) {
+    --canvas: #ededf3;
+    --surface: #ffffff;
+    --raised: #e2e3ed;
+    --plate: #ffffff;
+    --text: #171721;
+    --text-2: #575763;
+    --text-3: #646471;
+    --line: #e2e3ed;
+    --line-strong: #70707d;
+    --field-edge: #70707d;
+    --focus: #171721;
+    --error: #bd2a2b;
+    --chip: #e2e3ed;
+    --on-chip: #171721;
+    --scrim: rgb(23 23 33 / 0.45);
+    color-scheme: light;
+  }
+}
+
+:root {
+  /* motion — light arriving, never bouncing */
+  --dur-press: 120ms;
+  --dur-hover: 200ms;
+  --dur-state: 320ms;
+  --dur-sheet: 520ms;
+  --dur-light: 900ms;
+  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-exit: cubic-bezier(0.4, 0, 1, 1);
+  --ease-move: cubic-bezier(0.65, 0, 0.35, 1);
+
+  /* shape */
+  --r-card: 12px;
+  --r-field: 32px;
+  --r-pill: 999px;
+
+  /* layers */
+  --z-raised: 10;
+  --z-sticky: 100;
+  --z-drawer: 400;
+  --z-modal: 500;
+  --z-toast: 600;
+
+  /* layout */
+  --page-max: 1200px;
+  --gutter: clamp(16px, 4vw, 40px);
+
+  /* theme-switch origin, set by the toggle */
+  --vt-x: 50%;
+  --vt-y: 0%;
+}
+
+@theme inline {
+  --font-sans: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+  /* `font-display`: Fraunces, for anything set at heading scale outside the t-* utilities. */
+  --font-display: var(--font-fraunces), ui-serif, Georgia, serif;
+
+  --color-canvas: var(--canvas);
+  --color-surface: var(--surface);
+  --color-raised: var(--raised);
+  --color-plate: var(--plate);
+  --color-fg: var(--text);
+  --color-fg-2: var(--text-2);
+  --color-fg-3: var(--text-3);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-field-edge: var(--field-edge);
+  --color-action: var(--action);
+  --color-on-action: var(--on-action);
+  --color-focus: var(--focus);
+  --color-error: var(--error);
+  --color-chip: var(--chip);
+  --color-on-chip: var(--on-chip);
+
+  --radius-card: var(--r-card);
+  --radius-field: var(--r-field);
+  --radius-pill: var(--r-pill);
+
+  /* Utility names differ from the runtime vars on purpose: a theme key that
+     references itself (--ease-exit: var(--ease-exit)) recurses in Tailwind. */
+  --ease-light: var(--ease-out);
+  --ease-leave: var(--ease-exit);
+  --ease-travel: var(--ease-move);
+
+  /* Every `transition-*` utility without its own duration/easing runs on the brand
+     rhythm, not Tailwind's 150ms / ease-in-out default. */
+  --default-transition-duration: var(--dur-hover);
+  --default-transition-timing-function: var(--ease-out);
+}
+
+/* ---------- type scale ----------
+   Display and headings: Fraunces, soft (SOFT 100), slightly light, tightly tracked;
+   the display size uses the high-contrast optical cut (opsz 144). Everything from
+   t-sub down: Figtree. */
+@utility t-display {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  font-size: clamp(2.625rem, 1.55rem + 4.2vw, 4.375rem);
+  line-height: 1.02;
+  font-weight: 380;
+  font-variation-settings: "SOFT" 100, "opsz" 144;
+  letter-spacing: -0.02em;
+  text-wrap: balance;
+}
+@utility t-h1 {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  font-size: clamp(2.125rem, 1.6rem + 2vw, 2.875rem);
+  line-height: 1.08;
+  font-weight: 400;
+  font-variation-settings: "SOFT" 100;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+@utility t-h2 {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  font-size: clamp(1.75rem, 1.42rem + 1.3vw, 2.25rem);
+  line-height: 1.12;
+  font-weight: 420;
+  font-variation-settings: "SOFT" 100;
+  letter-spacing: -0.01em;
+  text-wrap: balance;
+}
+@utility t-h3 {
+  font-family: var(--font-fraunces), ui-serif, Georgia, serif;
+  font-size: clamp(1.375rem, 1.27rem + 0.45vw, 1.625rem);
+  line-height: 1.18;
+  font-weight: 440;
+  font-variation-settings: "SOFT" 100;
+  letter-spacing: -0.005em;
+}
+@utility t-sub {
+  font-size: clamp(1.1875rem, 1.13rem + 0.25vw, 1.3125rem);
+  line-height: 1.35;
+  font-weight: 420;
+}
+@utility t-body-lg {
+  font-size: 1.125rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+@utility t-body {
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 400;
+}
+@utility t-label {
+  font-size: 0.875rem;
+  line-height: 1.2;
+  font-weight: 480;
+  letter-spacing: 0.005em;
+}
+@utility t-caption {
+  font-size: 0.75rem;
+  line-height: 1.3;
+  font-weight: 480;
+  letter-spacing: 0.01em;
+}
+@utility t-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Loading: a slow sweep of light across the surface, not a pulse. */
+@utility skeleton {
+  background: linear-gradient(
+      110deg,
+      var(--raised) 38%,
+      color-mix(in srgb, var(--raised) 90%, var(--text)) 50%,
+      var(--raised) 62%
+    )
+    0 0 / 250% 100%;
+  animation: cv-sheen 1.6s var(--ease-move) infinite;
+}
+@keyframes cv-sheen {
+  from {
+    background-position: 100% 0;
+  }
+  to {
+    background-position: -50% 0;
+  }
+}
+
+/* Lights on: a surface rises out of the dark, then a rim of light sweeps it. */
+@keyframes cv-rise {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@keyframes cv-undim {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+@keyframes cv-rim {
+  0% {
+    opacity: 0;
+    translate: -40% -40%;
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+    translate: 40% 40%;
+  }
+}
+@utility lights-on {
+  animation: cv-rise 0.9s var(--ease-out) both;
+  animation-delay: var(--delay, 0ms);
+}
+
+/* Route progress: fast at first, then it waits — it never claims to be finished before the page is. */
+@keyframes cv-progress {
+  from {
+    transform: scaleX(0);
+  }
+  to {
+    transform: scaleX(0.8);
+  }
+}
+
+/* ---------- base ----------
+   In @layer base on purpose: unlayered CSS beats every Tailwind utility
+   regardless of specificity, so an unlayered focus ring could never be
+   overridden by a component (e.g. a field that shows focus with its own edge). */
+@layer base {
+  html {
+    background: var(--canvas);
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background: var(--canvas);
+    color: var(--text);
+    font-family: var(--font-figtree), ui-sans-serif, system-ui, sans-serif;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  ::selection {
+    background: var(--action);
+    color: var(--on-action);
+  }
+
+  :focus-visible {
+    outline: 2px solid var(--focus);
+    outline-offset: 3px;
+  }
+
+  /* Interaction states never snap. Every interactive element eases its colour,
+     edge, opacity and shadow on the hover rhythm, and its press scale on the
+     faster press rhythm. :where() keeps this at zero specificity, and the base
+     layer means any component's own transition utility still wins. */
+  :where(a, button, summary, label, select, [role="button"], [role="tab"], [role="option"], [role="menuitem"], [role="radio"], [role="switch"]) {
+    transition-property: color, background-color, border-color, outline-color, text-decoration-color, fill, stroke, opacity, box-shadow, scale, translate;
+    transition-duration: var(--dur-hover), var(--dur-hover), var(--dur-hover), var(--dur-hover), var(--dur-hover), var(--dur-hover),
+      var(--dur-hover), var(--dur-hover), var(--dur-hover), var(--dur-press), var(--dur-state);
+    transition-timing-function: var(--ease-out);
+  }
+}
+
+/* While the theme switches, the view transition animates the change; element
+   colour transitions would otherwise drag the old palette into the new one. */
+.theme-switching,
+.theme-switching * {
+  transition: none !important;
+}
+
+/* Content that appears in place (a confirmation, an error, a revealed form):
+   it rises in instead of popping. */
+@keyframes cv-enter {
+  from {
+    opacity: 0;
+    translate: 0 6px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+@utility enter {
+  animation: cv-enter var(--dur-state) var(--ease-out) both;
+}
+
+/* A link or title whose underline fades in on hover, instead of snapping on.
+   Thickness is set, not `from-font`: a font's own underline can be heavy and read as
+   a bar under wrapped titles. Clamped titles (line-clamp) need pb-0.5 on the clamped
+   box, or the last line's underline is clipped by its overflow. */
+@utility underline-reveal {
+  text-decoration-line: underline;
+  text-decoration-color: transparent;
+  text-decoration-thickness: max(1px, 0.06em);
+  text-decoration-skip-ink: auto;
+}
+
+/* ---------- theme switch: light spreads from the toggle ---------- */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation: none;
+  mix-blend-mode: normal;
+}
+::view-transition-new(root) {
+  animation: cv-light-spread var(--dur-light) var(--ease-out);
+}
+@keyframes cv-light-spread {
+  from {
+    clip-path: circle(0 at var(--vt-x) var(--vt-y));
+  }
+  to {
+    clip-path: circle(150vmax at var(--vt-x) var(--vt-y));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+  ::view-transition-new(root) {
+    animation: none;
+  }
+  .skeleton,
+  .lights-on,
+  .lit-plate::before,
+  .lit-plate::after {
+    animation: none !important;
+  }
+  .lit-plate::after {
+    opacity: 0 !important;
+  }
+}
+
+/* A plate that switches on: dark veil lifts, then one rim of light crosses it. */
+.lit-plate {
+  position: relative;
+  isolation: isolate;
+}
+.lit-plate::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 2;
+  border-radius: inherit;
+  background: #0f0f15;
+  pointer-events: none;
+  animation: cv-undim 1.1s var(--ease-out) both;
+  animation-delay: var(--delay, 0ms);
+}
+.lit-plate::before {
+  content: "";
+  position: absolute;
+  inset: -40%;
+  z-index: 3;
+  pointer-events: none;
+  opacity: 0;
+  background: linear-gradient(135deg, transparent 44%, rgb(255 255 255 / 0.5) 50%, transparent 56%);
+  animation: cv-rim 1.2s var(--ease-out) both;
+  animation-delay: calc(var(--delay, 0ms) + 350ms);
+}

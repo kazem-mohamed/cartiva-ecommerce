@@ -1,283 +1,172 @@
-# Cartiva — Brand Guidelines v1.0 (final)
+# Cartiva — Brand Guidelines v2.1
+
+> Last updated: 2026-10-03
+> Status: **For review**
+> Supersedes: v1.0 (Vault / gold / Archivo / C + disc / Arrow Travel). Only the name survives.
+> Visual board: `public/brand.html` (open `/brand.html` in the running app; `?theme=dark|light` forces a mode).
+> Editorial image prompts: `docs/editorial-image-prompts.md`.
+
+## 0. Idea
+
+**Everything, well lit.** Cartiva presents everyday things the way a gallery presents objects after hours: a dark room, one light, nothing competing. The product is always the brightest thing on the screen.
+
+| | |
+|---|---|
+| Positioning | A general marketplace (electronics and fashion today) whose premium is the presentation, not the price tag |
+| Premium, honestly | No luxury claims. Every product gets the same light, space and accurate price — EGP 149 to EGP 42,960 |
+| Personality | Calm · Precise · Confident · Honest |
+| Tone | Measured and direct. Short sentences, real numbers, no exclamation marks |
+| Visual philosophy | Darkness is the canvas; light is the content. One light source (cobalt) marks the one thing to do. Elevation by value, never shadow. Pills for what you touch, 12px for what you look at |
+
+## 1. Logo — Lit Edge
+
+A heavy ring C plus the rim of light a product picks up when lit from behind; the rim is thickest toward the upper-left source and tapers to zero.
+
+| Asset | Use | Minimum |
+|---|---|---|
+| Primary (horizontal) | Header, footer, default | 96px wide |
+| Alternative (stacked) | Auth, splash, packaging | — |
+| Symbol (with rim) | Icon use ≥ 40px | 40px |
+| Minimal mark (no rim) | Everything < 40px, favicon 32/16 | 16px |
+| Compact lockup (no rim) | Small headers, tight spaces | 96px wide |
+| App icon | Onyx or ivory tile, 22% corner radius | — |
+
+Geometry: ring R 500 / inner 262 / mouth ±42°. Rim = the part of an offset disc lying outside a clearance circle at R+30, 60 units at its thickest, tapering to zero at ±80° from the upper-left axis. Wordmark: Fraunces, weight 520, optical size 48, SOFT 100, font kerning — outlined, never retyped (cap height = 729 lockup units, so the lockup proportions are unchanged).
+
+Colour: ivory `#ededf3` on dark, onyx `#171721` on light. Nothing else. Clear space = the stroke of the C on all sides.
+
+Don't: recolour in cobalt · stretch, squash or rotate · add glow, shadow or gradient · use the rim below 40px.
+
+## 2. Colour
+
+Nine brand colours (from the reference DESIGN.md). Light-mode values are **derived** from them, never invented.
+
+| Brand | Hex | Job |
+|---|---|---|
+| Onyx | `#171721` | Canvas (dark) · text (light) |
+| Graphite | `#1e1e2a` | Surface (dark) |
+| Obsidian | `#272735` | Raised (dark) · chips |
+| Slate | `#70707d` | Strong lines · field edge (light) |
+| Mist | `#e2e3ed` | Field edge (dark) · raised (light) |
+| Ash | `#c3c3cc` | Secondary text (dark) |
+| Ivory | `#ededf3` | Text (dark) · canvas (light) · product plates |
+| Cobalt | `#5266eb` | The one action |
+| White | `#ffffff` | On cobalt · surface (light) |
+
+### Semantic tokens
+
+| Token | Dark | Light | Use |
+|---|---|---|---|
+| `--canvas` | `#171721` | `#ededf3` | Page |
+| `--surface` | `#1e1e2a` | `#ffffff` | Cards, sheets |
+| `--raised` | `#272735` | `#e2e3ed` | Chips, hovers |
+| `--plate` | `#ededf3` | `#ffffff` | Product plate (image multiplied onto it) |
+| `--text` | `#ededf3` | `#171721` | Primary text |
+| `--text-2` | `#c3c3cc` | `#575763` | Secondary text |
+| `--text-3` | `#8e8e99` | `#646471` | Meta, placeholders |
+| `--line` | `#272735` | `#e2e3ed` | Hairlines |
+| `--line-strong` | `#70707d` | `#70707d` | Strong dividers |
+| `--field-edge` | `#e2e3ed` | `#70707d` | Input and ghost-button edge |
+| `--action` / `--on-action` | `#5266eb` / `#ffffff` | same | Primary action |
+| `--focus` | `#ededf3` | `#171721` | Focus ring |
+| `--error` | `#e96368` | `#bd2a2b` | Errors and destructive only |
+| `--chip` / `--on-chip` | `#272735` / `#ededf3` | `#e2e3ed` / `#171721` | Discount chip, tags |
+
+Derived: dark `--text-3` = slate + 36% ash · light `--text-2` = slate + 28% onyx · light `--text-3` = slate + 13% onyx · error = the one approved hue exception, solved for contrast.
+
+**Contrast:** all 46 text, action, field-edge and focus pairs measured — every one passes WCAG AA in both modes (text ≥ 4.5:1, UI ≥ 3:1).
+
+### Rules
+1. **One cobalt per view.** Only the single next step: add to bag, checkout, place order. Never decoration, never text, never the logo.
+2. **Sale is monochrome.** Struck original in `--text-3`, current in `--text` at 480, discount as a `--chip`. Never red — 27 of 56 products are discounted.
+3. **One red, errors only.** Validation and destructive actions, always with icon + sentence.
+4. **No shadows on dark.** Separation is a value step: canvas → surface → raised.
+5. **Theme:** user-switchable Dark/Light, equal priority; default follows `prefers-color-scheme`.
+
+## 3. Typography
+
+**Soft editorial** (chosen 2026-10-03 from six candidates): **Fraunces** for display and headings — a variable serif set soft (`SOFT 100`), slightly light and tightly tracked, with the high-contrast optical cut (`opsz 144`) at display size — and **Figtree** for reading text, UI, labels and prices. Both OFL, Google Fonts, loaded with `next/font`.
+
+| Role | Face | Size | Weight | Settings | Line height | Tracking |
+|---|---|---|---|---|---|---|
+| Display | Fraunces | 42–70 | 380 | SOFT 100, opsz 144 | 1.02 | −.02em |
+| Heading L | Fraunces | 34–46 | 400 | SOFT 100 | 1.08 | −.015em |
+| Heading | Fraunces | 28–36 | 420 | SOFT 100 | 1.12 | −.01em |
+| Heading S | Fraunces | 22–26 | 440 | SOFT 100 | 1.18 | −.005em |
+| Subheading | Figtree | 19–21 | 420 | — | 1.35 | 0 |
+| Body L | Figtree | 18 | 400 | — | 1.5 | 0 |
+| Body | Figtree | 16 | 400 | — | 1.5 | 0 |
+| Label / button | Figtree | 14–15 | 480 | — | 1.2 | .005em |
+| Caption | Figtree | 12 | 480 | — | 1.3 | .01em |
+
+The wordmark is Fraunces too, outlined into the Lit Edge lockup (§1) — never typed live.
 
-> Last updated: 2026-08-10
-> Status: **Approved**
-> Supersedes: FreshCart (grocery identity), Souqly (interim naming), and the rejected indigo/magenta pass.
+Prices, totals, quantities and order numbers use `font-variant-numeric: tabular-nums`. Sentence case everywhere. Body 16px minimum, 65–75 characters a line.
 
-## Quick Reference
+## 4. Shape, space, layers
 
-| Element | Value |
-|---------|-------|
-| Primary Color | #1C1917 |
-| Secondary Color | #0C0A09 |
-| Accent Color | #9A6B12 |
-| Primary Font | Archivo |
-| Direction | Vault — near-black + struck metal |
-| Voice | Direct, confident, unfussy, warm only where it counts |
+| | |
+|---|---|
+| Spacing (4px base) | 4 · 8 · 12 · 16 · 20 · 24 · 32 · 40 · 56 · 72 · 112 · 128 |
+| Radius | controls/pills `999px` · fields `32px` · cards/plates `12px` · structural `4px` |
+| Page | max 1200px content; section rhythm 72px (112px between major bands) |
+| Breakpoints | 375 · 768 · 1024 · 1440 |
+| z-index | base 0 · raised 10 · sticky 100 · drawer 400 · modal 500 · toast 600 |
+| Touch | targets ≥ 44px, ≥ 8px apart |
 
----
+## 5. Imagery
 
-## 0. Positioning
+- **Product photos** come from the API untouched, on a `--plate` with `mix-blend-mode: multiply`. 47 of 56 are shot on white and merge into the plate; the nine with grey studio backdrops keep them — the plate never paints over a photograph. All are 660×900 (≈ 3:4). The one adjustment: 31 of the 351 photos arrive with a ~30px white mat baked in around a grey backdrop, which would show as pale strips down the plate's edges — those are drawn 10% closer so the mat falls just outside the frame (`src/ds/ui/matted.ts`).
+- **Editorial images** (8, see prompts doc, v2): one bright, airy studio on pale cool-grey paper, one large soft daylight source from the upper left. Egyptian and Mediterranean models in neutral wardrobes, devices placed the way they're used, at most one muted accent colour per image. Everything unbranded; no text or logos. (v1, a dark empty studio with no people, was rejected as too dark and abstract.)
 
-Cartiva is a **general marketplace** — electronics, fashion, beauty, home, books, mobiles, everyday essentials. It is explicitly **not** a grocery store; no visual, verbal, or photographic cue may imply one.
+## 6. Icons
 
-**The idea the brand owns:** *the tag*. Every object sold anywhere carries one — a price, a size, a spec. It is the single artefact common to every category Cartiva sells. Grocery brands own the crate and the stall; Cartiva owns the tag, the ticket, the struck plate.
+Lucide (`lucide-react`), one library. 24px grid, 1.5px stroke, round caps and joins. Outline everywhere; filled heart only for a saved item. Icon-only buttons carry an `aria-label`.
 
-**Why Vault, and not the category default.** Marketplace incumbents converge hard on orange (Amazon, Jumia, Etsy, AliExpress, Temu) or green (Shopify and grocery-coded storefronts). Green was ruled out by the client; orange would have landed on the rut. Vault takes the opposite route — the register of a watch case or a jewellery vitrine, where value is signalled by *material and restraint* rather than by shouting.
+## 7. Motion
 
----
+Motion is light arriving, not objects bouncing. Nothing overshoots. Transforms and opacity only.
 
-## 1. Colour
+| Token | Value | Use |
+|---|---|---|
+| `--dur-press` | 120ms | Press feedback (scale .97), toggles |
+| `--dur-hover` | 200ms | Hover, focus |
+| `--dur-state` | 320ms | State changes, image swap, chips |
+| `--dur-sheet` | 520ms | Drawers, sheets, pill morph |
+| `--dur-light` | 900ms | Lights on, theme switch |
+| `--ease-out` | `cubic-bezier(.16,1,.3,1)` | Entering |
+| `--ease-exit` | `cubic-bezier(.4,0,1,1)` | Leaving (~65% of enter time) |
+| `--ease-move` | `cubic-bezier(.65,0,.35,1)` | Travelling / shared elements |
 
-### Primary Colors
+Signature moments: **Lights on** (surfaces rise out of black, then a rim sweeps from the upper left — once per surface) · **Add to bag** (image travels to the bag, count ticks, drawer opens) · **Theme switch** (a circle of light spreads from the toggle — View Transitions) · **Pill morph** (mobile nav pill becomes the add-to-bag bar on product pages).
 
-| Name | Hex | Usage |
-|------|-----|-------|
-| Vault | #1C1917 | Brand anchor, primary surfaces on dark, wordmark on light |
-| Vault Dark | #0C0A09 | Deepest ground, hero and footer fields |
-| Vault Light | #161318 | Raised panels on dark |
+Stack: Motion (`motion/react`) + CSS + View Transitions. No GSAP, no smooth-scroll library. `prefers-reduced-motion` replaces all movement with a ≤120ms fade.
 
-### Secondary Colors
+## 8. Voice
 
-| Name | Hex | Usage |
-|------|-----|-------|
-| Void | #08070A | Page ground for dark surfaces |
-| Panel | #161318 | Cards and raised panels on dark |
-| Hairline | #2A252C | Dividers and edges on dark |
+| Moment | We say | We don't |
+|---|---|---|
+| Stock | In stock. | Hurry — only a few left! |
+| Error | That code didn't work. Check it and try again. | Error: invalid coupon!! |
+| Empty bag | Your bag is empty. Most wanted is a good place to start → | Oops! Nothing here |
+| Empty category | Nothing on display in Books yet. See what's in Fashion → | Coming soon! |
+| Success | Order placed. | Woohoo! Your order was successfully submitted! |
 
-### Accent Colors
+Never: invented statistics, fake urgency, "luxury", "curated", "seamless", "elevate", "unlock", exclamation marks, emoji. UI language: English; currency EGP.
 
-| Name | Hex | Usage |
-|------|-----|-------|
-| Gold Base | #9A6B12 | Accent anchor; the only gold safe as solid text on paper |
-| Gold Dark | #5C3D06 | Ramp shadow end, borders on light |
-| Gold Light | #E8C878 | Ramp highlight, text on dark |
+## 9. Honesty (non-negotiable)
 
-### The Gold Ramp — **gold is never one flat hex**
+This is a portfolio store on a public demo API. It claims only what is true.
 
-This is the single most important rule in the system. A metal edge needs a shadow end, a body, and a highlight, or it reads as a coloured line instead of metal.
-
-| Stop | Hex | Role |
-|------|-----|------|
-| 1 | #5C3D06 | Shadow — ramp ends, borders on paper |
-| 2 | #9A6B12 | Body — solid gold text on light (4.68:1) |
-| 3 | #C79A3C | Mid — dividers, sub-labels |
-| 4 | #E8C878 | Highlight — gold text on dark (9.38:1) |
-| 5 | #F6E7BE | Specular — the catch-light band only |
-
-Canonical metal edge:
-
-```css
-linear-gradient(115deg,
-  #5C3D06 0%, #9A6B12 22%, #E8C878 42%,
-  #F6E7BE 50%, #E8C878 58%, #9A6B12 78%, #5C3D06 100%)
-```
-
-### Neutrals
-
-| Name | Hex | Usage |
-|------|-----|-------|
-| Paper | #FAFAF9 | Light page ground |
-| Paper Line | #DED9D2 | Dividers on light |
-| Paper Ink | #0C0A09 | Body text on light |
-| Paper Muted | #6B6560 | Captions on light |
-| Text | #F2ECE1 | Body text on dark |
-| Text Dim | #9A9088 | Captions on dark |
-
-### Semantic
-
-| State | Hex |
-|-------|-----|
-| Success | #1F5F3F |
-| Warning | #B45309 |
-| Error | #8A2B18 |
-
-**Note on green:** the no-green rule governs brand identity — mark, CTAs, chrome, fields. Success confirmation stays a deep green because that mapping is a real-world convention and a redundancy for colour-blind users alongside icon and label. It never appears in the logo, nav, footer, or any CTA.
-
-### Contrast — measured, not assumed
-
-| Pair | Ratio | Verdict |
-|------|-------|---------|
-| Gold Light #E8C878 on Void #08070A | 9.38:1 | AAA |
-| Gold Base #9A6B12 on Paper #FAFAF9 | 4.68:1 | AA |
-| Text #F2ECE1 on Void | 16.1:1 | AAA |
-| Paper Ink on Paper | 18.2:1 | AAA |
-
-Every interactive element carries a visible `:focus-visible` ring — 1px Gold Light at 4px offset on dark, 2px Gold Base on light. Non-negotiable; the pre-Cartiva build shipped with focus suppressed globally.
-
----
-
-## 2. Typography
-
-### Font
-
-```css
---font-brand: 'Archivo', system-ui, sans-serif;   /* variable: wdth 62–125, wght 100–900 */
-```
-
-**One family, two widths.** Display runs expanded (`wdth` 110–118); body runs normal (100). The contrast comes from width, not from a second face — which keeps the system cohesive and gives it the signage character the tag idea wants. Archivo descends from grotesques built for signage and newspaper display: price boards, shelf tickets, wayfinding.
-
-### Scale
-
-| Role | Size | Weight | wdth | Tracking | Line height |
-|------|------|--------|------|----------|-------------|
-| Display | 62px / 36 mob | 600 | 116 | -.02em | 1.05 |
-| H1 | 40 / 30 | 600 | 112 | -.02em | 1.15 |
-| H2 | 30 / 24 | 600 | 110 | -.015em | 1.2 |
-| H3 | 22 / 20 | 600 | 106 | -.01em | 1.3 |
-| Body | 16 | 400 | 100 | 0 | 1.6 |
-| Body light | 16 | 300 | 100 | 0 | 1.66 |
-| Small | 13 | 400 | 100 | 0 | 1.5 |
-| Label | 10 | 500 | 100 | **.28em** | 1.4 · uppercase |
-| Button | 11 | 400 | 100 | **.24em** | 1 · uppercase |
-| Price | — | 600 | 110 | .01em | 1 · **tabular** |
-
-Body measure 65–75ch. Nothing below 10px, and 10px only for tracked uppercase labels.
-
-### Numerals
-
-Prices, order numbers, quantities and reference codes use `font-variant-numeric: tabular-nums`, so columns align and totals do not jitter as they update.
-
----
-
-## 3. Logo
-
-### The Mark
-
-Constructed, not drawn: a ring with a rectangular bite taken from its right side — producing a **C** — with a disc seated in the mouth. It is a letter and a container at once. No shopping-cart glyph; every marketplace already owns one.
-
-```
-ring     circle r44, inner r23, centred 50,50
-bite     rect x50 y35 w50 h30
-disc     circle cx68 cy50 r9   (in the mouth, clear of the ring)
-```
-
-| Variant | Use |
-|---------|-----|
-| Mark, Vault on paper | Default on light |
-| Mark, white + gold disc | Reversed, on dark |
-| Lockup mark + wordmark | Header, footer, auth |
-
-**Clear space** = the diameter of the disc, on all sides.
-**Minimum size** = 16px for the mark, 96px wide for the lockup.
-
-### Don'ts
-
-- Don't rotate, skew, or stretch
-- Don't recolour outside Vault / white / the gold ramp
-- Don't add shadow, glow, or bevel to the mark itself
-- Don't set the wordmark in anything but Archivo expanded
-- Don't reintroduce a cart glyph
-
----
-
-## 4. Buttons — **Arrow Travel**
-
-The approved primary. At rest it is a centred label and nothing else; on hover the label steps left and a mark arrives in the space it vacated. **The composition changes on interaction, not the colour.**
-
-```css
-/* the metal skin — the gradient SWEEPS, it never snaps */
-background-image:
-  linear-gradient(var(--ground),var(--ground)),
-  linear-gradient(115deg, /* the 5-stop gold ramp */);
-background-origin: border-box;
-background-clip: padding-box, border-box;
-background-size: 100% 100%, 220% 100%;
-background-position: 0 0, 0% 0;
-transition: background-position .75s cubic-bezier(.22,1,.36,1), color .5s;
-/* hover */ background-position: 0 0, 100% 0;
-```
-
-**Why 220% and a moving position:** CSS cannot transition `background-image`. Animating the *position* of an oversized gradient is what produces a smooth sweep instead of a snap. This is a system rule, not a one-off.
-
-| Tier | Treatment | Use |
-|------|-----------|-----|
-| Primary | Arrow travel, gold metal edge | Add to cart, buy, submit |
-| Secondary | Arrow travel, hairline edge, no gold | Save, compare |
-| Tertiary | Label over a gold rule | Size guide, shipping, care |
-| Quiet | Pill, no metal | Filters and category chips only |
-
-Height 60px (76px for the wide variant). Label 11px / .24em / uppercase. Motion 550–750ms — luxury motion is slow, and nothing in this system bounces.
-
----
-
-## 5. Components
-
-| Element | Radius |
-|---------|--------|
-| Buttons, inputs | 1px |
-| Cards, panels | 2px |
-| Sheets, modals | 3px |
-| Filter pills | full |
-| The mark | fixed geometry — never re-rounded |
-
-### Spacing
-
-4 · 8 · 16 · 24 · 32 · 48 · 72 · 112. More space above a heading than below it, always.
-
-### Elevation
-
-On dark, elevation is a **hairline and a tone step**, not a shadow — shadows do not read on near-black. On light, real offset plus soft blur, never a zero-offset coloured halo.
-
-| Level | Dark | Light |
-|-------|------|-------|
-| Raised | `#161318` + 1px `#2A252C` | `0 1px 2px rgba(12,10,9,.05)` |
-| Card | `#161318` + 1px `#2A252C` | `0 2px 4px rgba(12,10,9,.04), 0 12px 24px -12px rgba(12,10,9,.10)` |
-| Overlay | `#1C1917` + gold hairline | `0 8px 16px rgba(12,10,9,.08), 0 32px 56px -24px rgba(12,10,9,.20)` |
-
-### Motion
-
-One authored moment per surface. Easing `cubic-bezier(.22,1,.36,1)`. Micro-interactions 250–500ms; the gold sweep 750ms; page-level shared-element transitions 700ms. No spring, no bounce, no scattered hover effects.
-
-### Icons
-
-Outlined, 24px grid, **1.4px stroke**, 2px corner radius. One library throughout. Filled variants reserved for active/selected state only. Never an emoji or Unicode glyph in place of an icon.
-
----
-
-## 6. Imagery
-
-- **Subjects:** the product, on a plain or softly defocused ground. Objects over lifestyle.
-- **Lighting:** even and neutral, or a single directional light that suits the vitrine register. No warm golden-hour cast — it re-codes the brand as food.
-- **Colour:** product colour leads; brand colour lives in the UI around the image, not on it.
-- **Never:** produce, groceries, market stalls, baskets, farms, wooden crates.
-
----
-
-## 7. Voice
-
-| Trait | We are | We are not |
-|-------|--------|------------|
-| Direct | Plain, specific | Blunt, cold |
-| Confident | Assured | Boastful, hypey |
-| Unfussy | Efficient | Curt, robotic |
-| Warm | Human where it counts | Chatty, cutesy, emoji-laden |
-
-| Context | Example |
-|---------|---------|
-| Product | "In stock. Arrives Tue 12 Aug." |
-| Error | "That code has expired. Try another." |
-| Empty | "Nothing saved yet. Browse electronics →" |
-| Success | "Order placed." |
-
-**Prohibited:** fresh / farm / organic (grocery-coded); seamless, revolutionary, best-in-class, curated; unlock, supercharge, elevate; and any invented statistic.
-
----
-
-## 8. Honesty Rules (non-negotiable)
-
-This is a portfolio build on a public demo API. It has no real customers, revenue, ratings, or testimonials — so it claims none.
-
-- **No fabricated social proof.** No invented user counts, star ratings, testimonials, or press logos. The pre-Cartiva build shipped "50K+ Users", "4.9 Rating", and a testimonial from a person who does not exist.
-- **No dead controls.** If a control renders, it does something. The Google and Facebook buttons were removed rather than faked.
-- **No unowned assets.** The old login hero was hot-linked from a design tool's temp bucket with the generator prompt still in its alt text.
-
-Violations here are brand violations, not content bugs.
-
----
+- **No fabricated proof** — no invented ratings, counts, testimonials or press logos.
+- **No false newness** — all 56 products were added over three days in March 2023; nothing is labelled "new". Rankings use real fields (`sold`, discount, rating).
+- **No dead controls** — no size/colour selector without real variants, no free-shipping bar without a shipping rule, no filter option that returns nothing.
+- **No stand-in products** — editorial images never depict a fake version of a catalogue item.
 
 ## Changelog
 
 | Version | Date | Changes |
-|---------|------|---------|
-| 1.0 | 2026-08-10 | Cartiva identity approved: Vault direction, Archivo, C-mark, Arrow Travel buttons. |
+|---|---|---|
+| 2.1 | 2026-10-03 | Editorial imagery v2: bright studio with models (v1 dark studio rejected), all eight live. Type: Mona Sans replaced by Fraunces (display) + Figtree (text). Product card: "Curtain" (direction-aware photo wipe, "+" opening into "Add to bag"). Wordmark redrawn in Fraunces. Matted catalogue photos cropped. |
+| 2.0 | 2026-09-24 | Complete rebrand: vitrine/light concept, Lit Edge logo, DESIGN.md palette with derived light mode, Mona Sans, dark/light toggle, new motion and voice. |
+| 1.0 | 2026-08-10 | Vault identity (superseded). |

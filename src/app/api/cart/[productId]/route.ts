@@ -18,7 +18,7 @@ export async function PUT(
   context: { params: Promise<{ productId: string }> }
 ) {
   const session = await getServerSession(authOptions)
-  const token = (session as any)?.accessToken
+  const token = session?.accessToken
   const { productId } = await context.params
 
   if (!token) {
@@ -47,7 +47,7 @@ export async function DELETE(
   context: { params: Promise<{ productId: string }> }
 ) {
   const session = await getServerSession(authOptions)
-  const token = (session as any)?.accessToken
+  const token = session?.accessToken
   const { productId } = await context.params
 
   if (!token) {
