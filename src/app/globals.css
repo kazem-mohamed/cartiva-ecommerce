@@ -20,6 +20,45 @@
   select:focus:not(:focus-visible) {
     outline: none;
   }
+
+  /* Scrollbars: a slim pill in the current theme's text colour (so it flips with dark/light and
+     with any pinned-theme subtree), thickening and darkening under the pointer. Fine pointers
+     only — touch keeps its native overlay scrollbar. The colours are mixed from --text so the
+     thumb stays ≥ 3:1 against the canvas in both themes. */
+  @media (hover: hover) and (pointer: fine) {
+    ::-webkit-scrollbar {
+      width: 14px;
+      height: 14px;
+    }
+    ::-webkit-scrollbar-track,
+    ::-webkit-scrollbar-corner {
+      background: transparent;
+    }
+    /* The transparent border insets the thumb, leaving a 6px pill inside the 14px bar. */
+    ::-webkit-scrollbar-thumb {
+      min-height: 48px;
+      min-width: 48px;
+      border: 4px solid transparent;
+      border-radius: 999px;
+      background-clip: padding-box;
+      background-color: color-mix(in srgb, var(--text) 50%, transparent);
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      border-width: 3px;
+      background-color: color-mix(in srgb, var(--text) 75%, transparent);
+    }
+    ::-webkit-scrollbar-thumb:active {
+      background-color: color-mix(in srgb, var(--text) 90%, transparent);
+    }
+
+    /* Firefox has no ::-webkit-scrollbar: the standard properties get as close as they can. */
+    @supports not selector(::-webkit-scrollbar) {
+      * {
+        scrollbar-width: thin;
+        scrollbar-color: color-mix(in srgb, var(--text) 50%, transparent) transparent;
+      }
+    }
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

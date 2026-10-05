@@ -121,7 +121,7 @@ export function CompareView() {
 
       {/* A real table: screen readers announce "Price, Woman Shawl, EGP 149". Scrolls sideways on phones, labels pinned. */}
       {/* `relative`: sr-only text in the cells is absolutely positioned, and must be clipped by this scroller, not the page. */}
-      <div className="enter relative -mx-(--gutter) overflow-x-auto px-(--gutter) [scrollbar-width:thin]">
+      <div className="enter relative -mx-(--gutter) overflow-x-auto px-(--gutter)">
         <table className="w-full min-w-[640px] table-fixed border-collapse">
           <caption className="sr-only">Product comparison</caption>
           <colgroup>
